@@ -1,9 +1,9 @@
 === Bootstrap Shortcodes for WordPress ===
-Contributors: FoolsRun, filipstefansson, nodley
+Contributors: mwdelaney, FoolsRun, filipstefansson, nodley
 Tags: bootstrap, shortcode, shortcodes, responsive, grid
 Requires at least: 3.8
-Tested up to: 4.9.4
-Stable tag: 3.3.12
+Tested up to: 4.6
+Stable tag: 4.0.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -18,7 +18,7 @@ This plugin creates a simple, out of the way button just above the WordPress Tin
 
 **Requires PHP 5.3 or newer**
 
-For questions, support, or to contribute to this plugin, check out [our GitHub project](https://github.com/filipstefansson/bootstrap-3-shortcodes)
+For questions, support, or to contribute to this plugin, check out [our GitHub project](https://github.com/audioscavenger/bootstrap-shortcoder)
 
 ####Updated for Bootstrap 3.3.x
 Tested and working in the latest version of Bootstrap!
@@ -60,7 +60,7 @@ Tested and working in the latest version of Bootstrap!
 
 == Installation ==
 1. Download and unzip this plugin
-1. Upload the "bootstrap-3-shortcodes" folder to your site's `/wp-content/plugins/` directory
+1. Upload the "bootstrap-shortcoder" folder to your site's `/wp-content/plugins/` directory
 1. Activate the plugin through the 'Plugins' menu in WordPress
 1. Create or edit a page or post and click the "B" button that appears above the editor to see the plugin's documentation!
 
@@ -72,13 +72,7 @@ No, we assume you are already working with a WordPress theme that includes the B
 
 == Changelog ==
 
-= 3.3.12 =
-* Remove images from help documentation which caused slowdown for some users
-
-= 3.3.11 =
-* Tested to work with WordPress 4.9+
-
-= 3.3.10 =
+= 4.0.0 =
 * Tested to work with WordPress 4.6
 * Fixed bug in [collapse] (thanks who all who reported it)
 * Note PHP 5.3 or greater requirement in documentation

@@ -6,7 +6,7 @@
 
     function php_version_notice() {
         $class = 'notice notice-error';
-        $message = __( '<strong>Bootstrap 3 Shortcodes for WordPress</strong> requires PHP version 5.3 or later. You are running PHP version ' . PHP_VERSION . '. Please upgrade to a supported version of PHP.', 'sample-text-domain' );
+        $message = __( '<strong>Bootstrap Shortcoder for WordPress</strong> requires PHP version 5.3 or later. You are running PHP version ' . PHP_VERSION . '. Please upgrade to a supported version of PHP.', 'sample-text-domain' );
 
         printf( '<div class="%1$s"><p>%2$s</p></div>', $class, $message ); 
     }
@@ -25,8 +25,8 @@
 // ======================================================================== // 
 
     function bootstrap_shortcodes_styles_all() {
-        wp_register_style( 'bootstrap-shortcodes-help-all', plugins_url( 'bootstrap-3-shortcodes/includes/help/css/bootstrap-shortcodes-help-all.css' ) );
-        wp_enqueue_style( 'bootstrap-shortcodes-help-all' );
+        wp_register_style( 'bootstrap-shortcoder-help-all', plugins_url( 'bootstrap-shortcoder/includes/help/css/bootstrap-shortcoder-help-all.css' ) );
+        wp_enqueue_style( 'bootstrap-shortcoder-help-all' );
     }
 
     add_action( 'admin_enqueue_scripts', 'bootstrap_shortcodes_styles_all' );
@@ -63,11 +63,11 @@
 
     //Function to register and enqueue the documentation stylesheets
     function bootstrap_shortcodes_help_styles() {
-        wp_register_style( 'bs-font', plugins_url( 'bootstrap-3-shortcodes/includes/help/bs-font.css' ) );
-        wp_register_style( 'bootstrap-shortcodes-help', plugins_url( 'bootstrap-3-shortcodes/includes/help/css/bootstrap-shortcodes-help.css' ) );
-        wp_register_style( 'bootstrap-modal', plugins_url( 'bootstrap-3-shortcodes/includes/help/css/bootstrap-modal.css' ) );
-        wp_register_script( 'bootstrap', plugins_url( 'bootstrap-3-shortcodes/includes/help/js/bootstrap.min.js' ) );
-        wp_enqueue_style( 'bootstrap-shortcodes-help' );
+        wp_register_style( 'bs-font', plugins_url( 'bootstrap-shortcoder/includes/help/bs-font.css' ) );
+        wp_register_style( 'bootstrap-shortcoder-help', plugins_url( 'bootstrap-shortcoder/includes/help/css/bootstrap-shortcoder-help.css' ) );
+        wp_register_style( 'bootstrap-modal', plugins_url( 'bootstrap-shortcoder/includes/help/css/bootstrap-modal.css' ) );
+        wp_register_script( 'bootstrap', plugins_url( 'bootstrap-shortcoder/includes/help/js/bootstrap.min.js' ) );
+        wp_enqueue_style( 'bootstrap-shortcoder-help' );
         wp_enqueue_style( 'bootstrap-modal' );
         wp_enqueue_style( 'bs-font' );
         wp_enqueue_script( 'bootstrap' );
@@ -83,18 +83,18 @@
     //Function create the documentation popup button
     function add_bootstrap_button() {
         //the id of the container I want to show in the popup
-        $popup_id = 'bootstrap-shortcodes-help';
+        $popup_id = 'bootstrap-shortcoder-help';
 
         //our popup's title
         $title = 'Bootstrap Shortcodes Help';
 
         //append the icon
         printf(
-        '<a data-toggle="modal" data-target="#bootstrap-shortcodes-help" title="%2$s" href="%3$s" class="%4$s"><span class="bs_bootstrap-logo wp-media-buttons-icon"></span></a>',
+        '<a data-toggle="modal" data-target="#bootstrap-shortcoder-help" title="%2$s" href="%3$s" class="%4$s"><span class="bs_bootstrap-logo wp-media-buttons-icon"></span></a>',
         esc_attr( $popup_id ),
         esc_attr( $title ),
         esc_url( '#' ),
-        esc_attr( 'button add_media bootstrap-shortcodes-button')
+        esc_attr( 'button add_media bootstrap-shortcoder-button')
         //sprintf( '<img src="%s" style="height: 20px; position: relative; top: -2px;">', esc_url( $img ) )
         );
     }
@@ -114,7 +114,7 @@
 // ======================================================================== // 
 
     function boostrap_shortcodes_help() {
-        include( BS_SHORTCODES_DIR . 'bootstrap-shortcodes-help.php');
+        include( BS_SHORTCODES_DIR . 'bootstrap-shortcoder-help.php');
     }
 
     add_action( 'admin_footer', 'boostrap_shortcodes_help' );
@@ -129,9 +129,9 @@
 
     function bs_fullscreenbuttons($buttons) {
         $buttons[] = 'separator';
-        $buttons['bootstrap-shortcodes'] = array(
+        $buttons['bootstrap-shortcoder'] = array(
             'title' => __('Boostrap 3 Shortcodes Help'),
-            'onclick' => "jQuery('#bootstrap-shortcodes-help').modal('show');",
+            'onclick' => "jQuery('#bootstrap-shortcoder-help').modal('show');",
             'both' => false 
         );
         return $buttons;
@@ -149,7 +149,7 @@
 // ======================================================================== //
 
     function bs_register_script($scripts){
-        $scripts[] = "bootstrap-shortcodes-help-all";
+        $scripts[] = "bootstrap-shortcoder-help-all";
         return $scripts;
     }
 

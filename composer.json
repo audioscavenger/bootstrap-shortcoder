@@ -1,5 +1,5 @@
 {
-  "name": "mwdelaney/bootstrap-3-shortcodes",
+  "name": "audioscavenger/bootstrap-shortcoder",
   "description": "WordPress shortcodes for easier use of Bootstrap elements in your content.",
   "keywords": [
     "bootstrap",
@@ -7,13 +7,13 @@
     "wordpress",
     "plugin"
   ],
-  "homepage": "https://github.com/mwdelaney/bootstrap-3-shortcodes",
+  "homepage": "https://github.com/audioscavenger/bootstrap-shortcoder",
   "license": "GPL2",
   "authors": [
     {
-      "name": "Filip Stefansson",
-      "email": "filip.stefansson@gmail.com",
-      "homepage": "http://filipstefansson.com",
+      "name": "Eric Derewonko",
+      "email": "dev@derewonko.com",
+      "homepage": "https://gitea.derewonko.com/audioscavenger/bootstrap-shortcoder",
       "role": "Developer"
     },
     {

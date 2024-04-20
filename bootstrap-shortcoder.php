@@ -1,11 +1,11 @@
 <?php
 /*
-Plugin Name: Bootstrap 3 Shortcodes
-Plugin URI: https://github.com/MWDelaney/bootstrap-shortcodes
+Plugin Name: Bootstrap Shortcoder
+Plugin URI: https://github.com/audioscavenger/bootstrap-shortcoder
 Description: The plugin adds a shortcodes for all Bootstrap 3 elements.
-Version: 3.3.12
-Author: Michael W. Delaney, Filip Stefansson, and Simon Yeldon
-Author URI:
+Version: 4.0.0
+Author: Doctus IT
+Author URI: https://gitea.derewonko.com/audioscavenger/bootstrap-shortcoder
 License: MIT
 */
 
@@ -38,6 +38,12 @@ License: MIT
 
 			//Conditionally include popupver functionality (see function for conditionals)
 			add_action( 'the_post', array( $this, 'bootstrap_shortcodes_popover_script' ), 9999 );
+      
+			//Conditionally include bootstrap4-cards functionality
+			add_action( 'the_post', array( $this, 'bootstrap4_cards_styles' ), 9999 );
+      
+			//Conditionally include bootstrap-callout functionality
+			add_action( 'the_post', array( $this, 'bootstrap_callout_styles' ), 9999 );
 		}
 
 	// ======================================================================== //
@@ -55,7 +61,7 @@ License: MIT
 					global $post;
 					if( has_shortcode( $post->post_content, 'tooltip')){
 						// Bootstrap tooltip js
-						wp_enqueue_script( 'bootstrap-shortcodes-tooltip', BS_SHORTCODES_URL . 'js/bootstrap-shortcodes-tooltip.js', array( 'jquery' ), false, true );
+						wp_enqueue_script( 'bootstrap-shortcoder-tooltip', BS_SHORTCODES_URL . 'js/bootstrap-shortcoder-tooltip.js', array( 'jquery' ), false, true );
 					}
 			}
 
@@ -74,17 +80,47 @@ License: MIT
 					global $post;
 					if( has_shortcode( $post->post_content, 'popover')){
 							// Bootstrap popover js
-							wp_enqueue_script( 'bootstrap-shortcodes-popover', BS_SHORTCODES_URL . 'js/bootstrap-shortcodes-popover.js', array( 'jquery' ), false, true );
+							wp_enqueue_script( 'bootstrap-shortcoder-popover', BS_SHORTCODES_URL . 'js/bootstrap-shortcoder-popover.js', array( 'jquery' ), false, true );
 					}
 			}
 
 	// ======================================================================== //
 
+/* ======================================================================== //		
+ * new styles loaded only when using bootstrap 4 cards
+ * @author Eric Derewonko
+ * @since 3.4.0
+ * ======================================================================== */
+
+    function bootstrap4_cards_styles() {
+        global $post;
+        if( has_shortcode( $post->post_content, 'cards')){
+            wp_enqueue_style( 'bootstrap4-cards', BS_SHORTCODES_URL . 'css/wp-bootstrap4-cards.css' );
+        }
+    }
+
+// ======================================================================== //
+
+/* ======================================================================== //		
+ * new styles loaded only when using bootstrap callout
+ * @author Eric Derewonko
+ * @since 3.4.0
+ * ======================================================================== */
+
+    function bootstrap_callout_styles() {
+        global $post;
+        if( has_shortcode( $post->post_content, 'callout')){
+            wp_enqueue_style( 'bootstrap-callout', BS_SHORTCODES_URL . 'css/wp-bootstrap-callout.css' );
+        }
+    }
+
+// ======================================================================== //
+
 	/*--------------------------------------------------------------------------------------
 		*
 		* add_shortcodes
 		*
-		* @author Filip Stefansson
+		* @author Eric Derewonko
 		* @since 1.0
 		*
 		*-------------------------------------------------------------------------------------*/
@@ -98,6 +134,12 @@ License: MIT
 			'button',
 			'button-group',
 			'button-toolbar',
+			'callout',
+			'cards',
+			'card',
+			'card-header',
+			'card-block',
+			'card-footer',
 			'caret',
 			'carousel',
 			'carousel-item',
@@ -131,11 +173,15 @@ License: MIT
 			'nav-item',
 			'page-header',
 			'panel',
+			'panel-heading',
+			'panel-body',
+			'panel-footer',
 			'popover',
 			'progress',
 			'progress-bar',
 			'responsive',
 			'row',
+			'row-container',
 			'span',
 			'tab',
 			'table',
@@ -158,7 +204,7 @@ License: MIT
 		*
 		* bs_button
 		*
-		* @author Filip Stefansson, Nicolas Jonas
+		* @author Eric Derewonko, Nicolas Jonas
 		* @since 1.0
 		* //DW mod added xclass var
 		*-------------------------------------------------------------------------------------*/
@@ -266,7 +312,7 @@ License: MIT
 		*
 		* bs_caret
 		*
-		* @author Filip Stefansson
+		* @author Eric Derewonko
 		* @since 1.0
 		*
 		*-------------------------------------------------------------------------------------*/
@@ -545,7 +591,7 @@ License: MIT
 		*
 		* bs_alert
 		*
-		* @author Filip Stefansson
+		* @author Eric Derewonko
 		* @since 1.0
 		*
 		*-------------------------------------------------------------------------------------*/
@@ -641,7 +687,7 @@ License: MIT
 		*
 		* bs_code
 		*
-		* @author Filip Stefansson
+		* @author Eric Derewonko
 		* @since 1.0
 		*
 		*-------------------------------------------------------------------------------------*/
@@ -673,11 +719,39 @@ License: MIT
 		*
 		* bs_row
 		*
-		* @author Filip Stefansson
+		* @author Eric Derewonko
 		* @since 1.0
 		*
 		*-------------------------------------------------------------------------------------*/
 	function bs_row( $atts, $content = null ) {
+
+		$atts = shortcode_atts( array(
+				"xclass" => false,
+				"data"   => false
+		), $atts );
+
+		$class  = 'row';
+		$class .= ( $atts['xclass'] )   ? ' ' . $atts['xclass'] : '';
+
+		$data_props = $this->parse_data_attributes( $atts['data'] );
+
+		return sprintf(
+			'<div class="%s"%s>%s</div>',
+			esc_attr( trim($class) ),
+			( $data_props ) ? ' ' . $data_props : '',
+			do_shortcode( $content )
+		);
+	}
+
+	/*--------------------------------------------------------------------------------------
+		*
+		* bs_row_container
+		* for rows inside a column, fix a bug where the row would close too early
+		* @author Eric Derewonko
+		* @since 3.4.0
+		*
+		*-------------------------------------------------------------------------------------*/
+	function bs_row_container( $atts, $content = null ) {
 
 		$atts = shortcode_atts( array(
 				"xclass" => false,
@@ -933,7 +1007,7 @@ License: MIT
 		*
 		* bs_label
 		*
-		* @author Filip Stefansson
+		* @author Eric Derewonko
 		* @since 1.0
 		*
 		*-------------------------------------------------------------------------------------*/
@@ -963,7 +1037,7 @@ License: MIT
 		*
 		* bs_badge
 		*
-		* @author Filip Stefansson
+		* @author Eric Derewonko
 		* @since 1.0
 		*
 		*-------------------------------------------------------------------------------------*/
@@ -993,7 +1067,7 @@ License: MIT
 		*
 		* bs_icon
 		*
-		* @author Filip Stefansson
+		* @author Eric Derewonko
 		* @since 1.0
 		*
 		*-------------------------------------------------------------------------------------*/
@@ -1023,7 +1097,7 @@ License: MIT
 		*
 		* simple_table
 		*
-		* @author Filip Stefansson
+		* @author Eric Derewonko
 		* @since 1.0
 		*
 		*-------------------------------------------------------------------------------------
@@ -1066,7 +1140,7 @@ License: MIT
 		*
 		* bs_table_wrap
 		*
-		* @author Filip Stefansson
+		* @author Eric Derewonko
 		* @since 1.0
 		*
 		*-------------------------------------------------------------------------------------*/
@@ -1104,7 +1178,7 @@ License: MIT
 		*
 		* bs_well
 		*
-		* @author Filip Stefansson
+		* @author Eric Derewonko
 		* @since 1.0
 		*
 		* Options:
@@ -1137,17 +1211,13 @@ License: MIT
 		*
 		* bs_panel
 		*
-		* @author M. W. Delaney
-		* @since 1.0
+		* @author Eric Derewonko
+		* @since 3.4.0
 		*
 		*-------------------------------------------------------------------------------------*/
 	function bs_panel( $atts, $content = null ) {
-
 		$atts = shortcode_atts( array(
-				"title"   => false,
-				"heading" => false,
 				"type"    => false,
-				"footer"  => false,
 				"xclass"  => false,
 				"data"    => false
 		), $atts );
@@ -1156,34 +1226,268 @@ License: MIT
 		$class .= ( $atts['type'] )     ? ' panel-' . $atts['type'] : ' panel-default';
 		$class .= ( $atts['xclass'] )   ? ' ' . $atts['xclass'] : '';
 
-		if( ! $atts['heading'] && $atts['title'] ) {
-			$atts['heading'] = $atts['title'];
-			$atts['title'] = true;
-		}
+		$data_props = $this->parse_data_attributes( $atts['data'] );
+
+		return sprintf(
+			'<div class="%s"%s>%s</div>',
+			esc_attr( trim($class) ),
+			( $data_props ) ? ' ' . $data_props : '',
+			do_shortcode( $content )
+		);
+	}
+
+	/*--------------------------------------------------------------------------------------
+		*
+		* bs_panel_heading
+		*
+		* @author Eric Derewonko
+		* @since 3.4.0
+		*
+		*-------------------------------------------------------------------------------------*/
+	function bs_panel_heading( $atts, $content = null ) {
+		$atts = shortcode_atts( array(
+				"xclass" => false,
+				"data"   => false
+		), $atts );
+
+		$class  = 'panel-heading';
+		$class .= ( $atts['xclass'] )   ? ' ' . $atts['xclass'] : '';
 
 		$data_props = $this->parse_data_attributes( $atts['data'] );
 
-		$footer = ( $atts['footer'] ) ? '<div class="panel-footer">' . $atts['footer'] . '</div>' : '';
-
-		if ( $atts['heading'] ) {
-			$heading = sprintf(
-				'<div class="panel-heading">%s%s%s</div>',
-				( $atts['title'] ) ? '<h3 class="panel-title">' : '',
-				esc_html( $atts['heading'] ),
-				( $atts['title'] ) ? '</h3>' : ''
-			);
-		}
-		else {
-			$heading = '';
-		}
-
 		return sprintf(
-			'<div class="%s"%s>%s<div class="panel-body">%s</div>%s</div>',
+			'<div class="%s"%s>%s</div>',
 			esc_attr( trim($class) ),
 			( $data_props ) ? ' ' . $data_props : '',
-			$heading,
-			do_shortcode( $content ),
-			( $footer ) ? ' ' . $footer : ''
+			do_shortcode( $content )
+		);
+	}
+
+	/*--------------------------------------------------------------------------------------
+		*
+		* bs_panel_body
+		*
+		* @author Eric Derewonko
+		* @since 3.4.0
+		*
+		*-------------------------------------------------------------------------------------*/
+	function bs_panel_body( $atts, $content = null ) {
+
+		$atts = shortcode_atts( array(
+				"xclass" => false,
+				"data"   => false
+		), $atts );
+
+		$class  = 'panel-body';
+		$class .= ( $atts['xclass'] )   ? ' ' . $atts['xclass'] : '';
+
+		$data_props = $this->parse_data_attributes( $atts['data'] );
+
+		return sprintf(
+			'<div class="%s"%s>%s</div>',
+			esc_attr( trim($class) ),
+			( $data_props ) ? ' ' . $data_props : '',
+			do_shortcode( $content )
+		);
+	}
+
+	/*--------------------------------------------------------------------------------------
+		*
+		* bs_panel_footer
+		*
+		* @author Eric Derewonko
+		* @since 3.4.0
+		*
+		*-------------------------------------------------------------------------------------*/
+	function bs_panel_footer( $atts, $content = null ) {
+
+		$atts = shortcode_atts( array(
+				"xclass" => false,
+				"data"   => false
+		), $atts );
+
+		$class  = 'panel-footer';
+		$class .= ( $atts['xclass'] )   ? ' ' . $atts['xclass'] : '';
+
+		$data_props = $this->parse_data_attributes( $atts['data'] );
+
+		return sprintf(
+			'<div class="%s"%s>%s</div>',
+			esc_attr( trim($class) ),
+			( $data_props ) ? ' ' . $data_props : '',
+			do_shortcode( $content )
+		);
+	}
+
+	/*--------------------------------------------------------------------------------------
+		*
+		* bs_callout
+		*
+		* @author Eric Derewonko
+		* @since 3.4.0
+		*
+		*-------------------------------------------------------------------------------------*/
+	function bs_callout( $atts, $content = null ) {
+		$atts = shortcode_atts( array(
+				"type"   => false,
+				"size"   => false,
+				"xclass" => false,
+				"data"   => false
+		), $atts );
+
+		$class  = 'bs-callout';
+		$class .= ( $atts['type'] )     ? ' bs-callout-' . $atts['type'] : ' bs-callout-default';
+		$class .= ( $atts['size'] )     ? ' bs-callout-' . $atts['size'] : ' bs-callout-lg';
+		$class .= ( $atts['xclass'] )   ? ' ' . $atts['xclass'] : '';
+
+		$data_props = $this->parse_data_attributes( $atts['data'] );
+
+		return sprintf(
+			'<div class="%s"%s>%s</div>',
+			esc_attr( trim($class) ),
+			( $data_props ) ? ' ' . $data_props : '',
+			do_shortcode( $content )
+		);
+	}
+
+	/*--------------------------------------------------------------------------------------
+		*
+		* bs_cards
+		*
+		* @author Eric Derewonko
+		* @since 3.4.0
+		*
+		*-------------------------------------------------------------------------------------*/
+	function bs_cards( $atts, $content = null ) {
+		$atts = shortcode_atts( array(
+				"xclass"  => false,
+				"data"    => false
+		), $atts );
+
+		$class  = 'card-columns';
+		$class .= ( $atts['xclass'] )   ? ' ' . $atts['xclass'] : '';
+
+		$data_props = $this->parse_data_attributes( $atts['data'] );
+
+		return sprintf(
+			'<div class="%s"%s>%s</div>',
+			esc_attr( trim($class) ),
+			( $data_props ) ? ' ' . $data_props : '',
+			do_shortcode( $content )
+		);
+	}
+
+	/*--------------------------------------------------------------------------------------
+		*
+		* bs_card
+		*
+		* @author Eric Derewonko
+		* @since 3.4.0
+		*
+		*-------------------------------------------------------------------------------------*/
+	function bs_card( $atts, $content = null ) {
+		$atts = shortcode_atts( array(
+				"type" => false,
+				"xclass" => false,
+				"data"   => false
+		), $atts );
+
+		$class  = 'card';
+		$class .= ( $atts['type'] )     ? ' card-' . $atts['type'] : '';
+		$class .= ( $atts['xclass'] )   ? ' ' . $atts['xclass'] : '';
+
+		$data_props = $this->parse_data_attributes( $atts['data'] );
+
+		return sprintf(
+			'<div class="%s"%s>%s</div>',
+			esc_attr( trim($class) ),
+			( $data_props ) ? ' ' . $data_props : '',
+			do_shortcode( $content )
+		);
+	}
+
+	/*--------------------------------------------------------------------------------------
+		*
+		* bs_card_header
+		*
+		* @author Eric Derewonko
+		* @since 3.4.0
+		*
+		*-------------------------------------------------------------------------------------*/
+	function bs_card_header( $atts, $content = null ) {
+		$atts = shortcode_atts( array(
+				"xclass" => false,
+				"data"   => false
+		), $atts );
+
+		$class  = 'card-header';
+		$class .= ( $atts['xclass'] )   ? ' ' . $atts['xclass'] : '';
+
+		$data_props = $this->parse_data_attributes( $atts['data'] );
+
+		return sprintf(
+			'<div class="%s"%s>%s</div>',
+			esc_attr( trim($class) ),
+			( $data_props ) ? ' ' . $data_props : '',
+			do_shortcode( $content )
+		);
+	}
+
+	/*--------------------------------------------------------------------------------------
+		*
+		* bs_card_block
+		*
+		* @author Eric Derewonko
+		* @since 3.4.0
+		*
+		*-------------------------------------------------------------------------------------*/
+	function bs_card_block( $atts, $content = null ) {
+
+		$atts = shortcode_atts( array(
+				"type"   => false,
+				"xclass" => false,
+				"data"   => false
+		), $atts );
+
+		$class  = 'card-block';
+		$class .= ( $atts['type'] )     ? ' card-' . $atts['type'] : '';
+		$class .= ( $atts['xclass'] )   ? ' ' . $atts['xclass'] : '';
+
+		$data_props = $this->parse_data_attributes( $atts['data'] );
+
+		return sprintf(
+			'<div class="%s"%s>%s</div>',
+			esc_attr( trim($class) ),
+			( $data_props ) ? ' ' . $data_props : '',
+			do_shortcode( $content )
+		);
+	}
+
+	/*--------------------------------------------------------------------------------------
+		*
+		* bs_card_footer
+		*
+		* @author Eric Derewonko
+		* @since 3.4.0
+		*
+		*-------------------------------------------------------------------------------------*/
+	function bs_card_footer( $atts, $content = null ) {
+
+		$atts = shortcode_atts( array(
+				"xclass" => false,
+				"data"   => false
+		), $atts );
+
+		$class  = 'card-footer';
+		$class .= ( $atts['xclass'] )   ? ' ' . $atts['xclass'] : '';
+
+		$data_props = $this->parse_data_attributes( $atts['data'] );
+
+		return sprintf(
+			'<div class="%s"%s>%s</div>',
+			esc_attr( trim($class) ),
+			( $data_props ) ? ' ' . $data_props : '',
+			do_shortcode( $content )
 		);
 	}
 
@@ -1191,7 +1495,7 @@ License: MIT
 		*
 		* bs_tabs
 		*
-		* @author Filip Stefansson
+		* @author Eric Derewonko
 		* @since 1.0
 		* Modified by TwItCh twitch@designweapon.com
 		* Now acts a whole nav/tab/pill shortcode solution!
@@ -1280,7 +1584,7 @@ License: MIT
 		*
 		* bs_tab
 		*
-		* @author Filip Stefansson
+		* @author Eric Derewonko
 		* @since 1.0
 		*
 		*-------------------------------------------------------------------------------------*/
@@ -1331,7 +1635,7 @@ License: MIT
 		*
 		* bs_collapsibles
 		*
-		* @author Filip Stefansson
+		* @author Eric Derewonko
 		* @since 1.0
 		*
 		*-------------------------------------------------------------------------------------*/
@@ -1369,7 +1673,7 @@ License: MIT
 		*
 		* bs_collapse
 		*
-		* @author Filip Stefansson
+		* @author Eric Derewonko
 		* @since 1.0
 		*
 		*-------------------------------------------------------------------------------------*/
@@ -1502,7 +1806,7 @@ License: MIT
 		*
 		* bs_carousel_item
 		*
-		* @author Filip Stefansson
+		* @author Eric Derewonko
 		* @since 1.0
 		*
 		*-------------------------------------------------------------------------------------*/

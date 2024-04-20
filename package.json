@@ -1,5 +1,5 @@
 {
-  "name": "bootstrap-3-shortcodes",
+  "name": "bootstrap-shortcoder",
   "devDependencies": {
     "grunt": "~0.4.4",
     "grunt-markdown": "latest"

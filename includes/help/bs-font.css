@@ -1,10 +1,10 @@
 @font-face {
 	font-family: 'bss4wp';
-	src:url('fonts/Bootstrap-Shortcodes-for-WordPress.eot?-o1r0ap') format('embedded-opentype');
-	src:url('fonts/Bootstrap-Shortcodes-for-WordPress.eot?#iefix-o1r0ap') format('embedded-opentype'),
-		url('fonts/Bootstrap-Shortcodes-for-WordPress.woff?-o1r0ap') format('woff'),
-		url('fonts/Bootstrap-Shortcodes-for-WordPress.ttf?-o1r0ap') format('truetype'),
-		url('fonts/Bootstrap-Shortcodes-for-WordPress.svg?-o1r0ap#Bootstrap-Shortcodes-for-WordPress') format('svg');
+	src:url('fonts/Bootstrap-Shortcoder-for-WordPress.eot?-o1r0ap') format('embedded-opentype');
+	src:url('fonts/Bootstrap-Shortcoder-for-WordPress.eot?#iefix-o1r0ap') format('embedded-opentype'),
+		url('fonts/Bootstrap-Shortcoder-for-WordPress.woff?-o1r0ap') format('woff'),
+		url('fonts/Bootstrap-Shortcoder-for-WordPress.ttf?-o1r0ap') format('truetype'),
+		url('fonts/Bootstrap-Shortcoder-for-WordPress.svg?-o1r0ap#Bootstrap-Shortcoder-for-WordPress') format('svg');
 	font-weight: normal;
 	font-style: normal;
 }
@@ -13,7 +13,7 @@
 	padding: 0 3px;
 }
 .wp-media-buttons .add_media span.bs_bootstrap-logo:before,
-.mce-i-bootstrap-shortcodes:before {
+.mce-i-bootstrap-shortcoder:before {
 	font-family: 'bss4wp' !important;
 	content: "\e600" !important;
 	color: #6f5499 !important;
@@ -30,6 +30,6 @@
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
 }
-#wp_fs_bootstrap-shortcodes {
+#wp_fs_bootstrap-shortcoder {
 	font-size: 14px !important;
 }

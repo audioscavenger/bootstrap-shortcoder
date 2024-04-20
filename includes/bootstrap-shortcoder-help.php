@@ -43,7 +43,7 @@ $html = file_get_contents(dirname(__FILE__) . '/help/README.html');
         // Create tabs from the help documentation content, splitting on the H2s
         // ======================================================================== //
         
-            jQuery('#bootstrap-shortcodes-help h2').each(function(){
+            jQuery('#bootstrap-shortcoder-help h2').each(function(){
                 var id = jQuery(this).attr("id");
                 jQuery(this).removeAttr("id").nextUntil("h2").andSelf().wrapAll('<div class="tab-pane" id="bs-' + id + '" />');
             });
@@ -51,7 +51,7 @@ $html = file_get_contents(dirname(__FILE__) . '/help/README.html');
             jQuery('#bs-shortcode-reference').addClass('active');
         
             //Hide header info from the readme, not relevent to documentation.
-            jQuery("#bootstrap-shortcodes-help #bootstrap-3-shortcodes-for-wordpress").nextUntil("#bootstrap-shortcodes-help #bs-requirements").hide();
+            jQuery("#bootstrap-shortcoder-help #bootstrap-shortcoder-for-wordpress").nextUntil("#bootstrap-shortcoder-help #bs-requirements").hide();
         
         // ======================================================================== //
         
@@ -88,7 +88,7 @@ $html = file_get_contents(dirname(__FILE__) . '/help/README.html');
 // ======================================================================== //
 ?>
 
-<div id="bootstrap-shortcodes-help" class="modal fade">
+<div id="bootstrap-shortcoder-help" class="modal fade">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
@@ -127,7 +127,7 @@ $html = file_get_contents(dirname(__FILE__) . '/help/README.html');
                         $html = str_replace('<hr>', '<hr><a class="btn btn-link btn-default pull-right" href="#bs-top"><i class="text-muted glyphicon glyphicon-arrow-up"></i></a>', $html);
                         $html = str_replace('<h3 id="', '<h3 id="bs-', $html);
                         $html = str_replace('</pre>', '</pre><p><button data-dismiss="modal" class="btn btn-primary btn-sm insert-code">Insert Example <i class="glyphicon glyphicon-share-alt"></i></button></p>', $html);
-                        $html = preg_replace("/<img[^>]+\>/i", "", $html);
+                        
                         //Insert the HTML now that we're done editing it
                         echo $html;
                         

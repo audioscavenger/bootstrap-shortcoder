@@ -1,3 +1,41 @@
+#------------------------------
+# gitsync:
+**/backup
+*.cfg_custom.cmd
+commit.*.txt
+*.zip
+*.7z
+
+# ---> this project
 .DS_Store
 .idea
 node_modules
+
+#------------------------------
+
+# ---> Windows
+# Windows thumbnail cache files
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+
+# Dump file
+*.stackdump
+
+# Folder config file
+[Dd]esktop.ini
+
+# Recycle Bin used on file shares
+$RECYCLE.BIN/
+
+# Windows Installer files
+*.cab
+*.msi
+*.msix
+*.msm
+*.msp
+
+# Windows shortcuts
+*.lnk
+
