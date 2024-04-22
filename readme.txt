@@ -3,7 +3,7 @@ Contributors: mwdelaney, FoolsRun, filipstefansson, nodley
 Tags: bootstrap, shortcode, shortcodes, responsive, grid
 Requires at least: 3.8
 Tested up to: 4.6
-Stable tag: 4.0.1
+Stable tag: 4.0.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -72,7 +72,45 @@ No, we assume you are already working with a WordPress theme that includes the B
 
 == Changelog ==
 
+= 4.0.2 =
+* major cleanup
+* started revamp of help/README: placed some insert code buttons at the top
+* added scroll-up in modal
+* rewrote modal and functions attached
+* most works with Bootstrap 5.3
+
 = 4.0.1 =
+* fixed a major bug... shortcodes helper was loaded in the footer ALWAYS... slowing down your admin
+* most functions and names are renamed properly
+* added Bootstrap 5.3 cdn
+* partially validated for Bootstrap 5.3: data-stuff becomes data-bs-stuff
+
+= 4.0.0 =
+* Complete reboot and new name
+* added callout, cards, row-container
+* panel
+
+- Added callout:
+  - these are the callout from Bootstrap docs, plus a nice background, plus transparency and disabled options.
+  - help updated
+  - todo: none
+
+- Added cards:
+  - these are the cards from bootstrap 4, in a Pinterest column like fashion.
+  - help updated
+  - todo: add more options like set of cards, no radius etc
+
+- Added row-container:
+  - for rows inside a column, this fix a bug where the row would close too early. We just needed another shortcode for rows that's it.
+  - usage: [row][column][row-container][/row-container]..[/column][/row]
+  - todo: integrate an usage example in help.html
+
+- bugfix panel:
+  - now it's a real container with panel-heading, panel-body, panel-footer as per bootstrap definition.
+  - help updated
+  - todo: inform current users that the syntax has changed. They do not lose their data, but they need to rewrite the shortcodes though.
+
+= 3.3.9 =
 * Tested to work with WordPress 4.6
 * Fixed bug in [collapse] (thanks who all who reported it)
 * Note PHP 5.3 or greater requirement in documentation

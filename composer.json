@@ -14,10 +14,12 @@
       "name": "Eric Derewonko",
       "email": "dev@derewonko.com",
       "homepage": "https://gitea.derewonko.com/audioscavenger/bootstrap-shortcoder",
-      "role": "Developer"
+      "role": "Maintainer"
     },
     {
-      "name": "Filip Stefansson"
+      "name": "Filip Stefansson",
+      "email": "filip.stefansson@gmail.com",
+      "homepage": "http://filipstefansson.com",
     },
     {
       "name": "Simon Yeldon"

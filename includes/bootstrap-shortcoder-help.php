@@ -14,7 +14,28 @@ $html = file_get_contents(dirname(__FILE__) . '/help/README.html');
 // Include some jQuery to edit the help document
 // ======================================================================== //
 ?>
-<script type="text/javascript">
+<style type="text/css">
+#scroll-up {
+    display: inline-block;
+    position: sticky;
+    z-index: 99;
+    bottom: 40px;
+    right: 20px;
+    width: 50px;
+    height: 50px;
+    font-size: 28px;
+    line-height: 50px;
+    text-align: center;
+    text-decoration: none;
+    cursor: pointer;
+    color: #1c1c1c;
+    background-color: #ffbf3f;
+    opacity: 1 !important;
+}
+</style>
+
+
+<script defer type="text/javascript">
     jQuery(document).ready(function() {
         
         // ======================================================================== //		
@@ -50,19 +71,16 @@ $html = file_get_contents(dirname(__FILE__) . '/help/README.html');
             // <pre><code>[button type=&quot;success&quot; size=&quot;lg&quot; link=&quot;#&quot;] ... [/button]</code></pre>
         // new structure:
             // <h3 id="buttons">Buttons</h3>
-            // <h4 id="btn-default, primary, success, info, warning, danger, link">btn-default</h4>
+            // <h4 id="btn-primary, primary, success, info, warning, danger, link">btn-primary</h4>
             // <pre><code>[button type=&quot;success&quot; size=&quot;lg&quot; link=&quot;#&quot;] ... [/button]</code></pre> [<pre><code>[button type=&quot;primary&quot; size=&quot;md&quot; link=&quot;#&quot;] ... [/button]</code></pre> dynamically added--> [<p><button data-bs-dismiss="modal" class="btn btn-primary btn-sm insert-code">Insert Example <i class="glyphicon glyphicon-share-alt"></i></button></p>]
             // ...
         // ======================================================================== //
         
             jQuery(".drop-code").click(function() {
-                // href in this case is the specific example after the new h4s
-                // console.log(this);
-                // console.log(this.getAttribute('href'));              // #bs-btn-primary
-                // console.log(jQuery(this.getAttribute('href')));         // supposedly the h4
-                // console.log(jQuery(this.getAttribute('href')).next());  // supposedly the pre
-                // console.log(jQuery(this.getAttribute('href')).next().find("code"));
-                var example = jQuery(this.getAttribute('href')).next().find("code").text();
+                // cannot use href, it breaks the close modal event
+                // also all the h3 id are prepended by bs- during loading of the README
+                console.log(this.dataset.h4);    // #bs-btn-primary
+                var example = jQuery(this.dataset.h4).next().find("code").text();
                 var lines = example.split('\n');
                 var paras = '';
                 jQuery.each(lines, function(i, line) {
@@ -76,7 +94,14 @@ $html = file_get_contents(dirname(__FILE__) . '/help/README.html');
         
         // ======================================================================== //
     
-    
+
+        // ======================================================================== //		
+        // scroll-up
+        // ======================================================================== //
+            jQuery("#scroll-up").on("click",function(){
+                jQuery(".modal-body").animate({scrollTop:0},800);
+                return false;
+            });
         
         // ======================================================================== //		
         // Create tabs from the help documentation content, splitting on the H2s
@@ -151,18 +176,20 @@ $html = file_get_contents(dirname(__FILE__) . '/help/README.html');
             $html = str_replace('<li><a ', '<a class="list-group-item" ', $html);
             $html = str_replace('</li>', '', $html);
             $html = str_replace('href="#', 'href="#bs-', $html);
-            $html = str_replace('<hr>', '<hr><a class="btn btn-link btn-default pull-right" href="#bs-top"><i class="text-muted glyphicon glyphicon-arrow-up"></i></a>', $html);
+            $html = str_replace('<hr>', '<hr><a class="btn btn-link btn-primary pull-right" href="#bs-top"><i class="text-muted glyphicon glyphicon-arrow-up"></i></a>', $html);
             $html = str_replace('<h3 id="', '<h3 id="bs-', $html);
             $html = str_replace('</pre>', '</pre><p><button data-bs-dismiss="modal" class="btn btn-primary btn-sm insert-code">Insert Example <i class="glyphicon glyphicon-share-alt"></i></button></p>', $html);
             
-            ////Insert the HTML now that we're done editing it
-            file_put_contents('/run/cache/README-transformed.html', $html);
+            // file_put_contents('/run/cache/README-debug.html', $html);
+            // Insert the HTML now that we're done editing it
             echo $html;
 
             // ======================================================================== //
         ?>
         </div><!-- /.tab-content -->
-
+        <a id="scroll-up" class="secondary-color">
+            <i class="fa fa-angle-up"></i>
+        </a>
       </div><!-- /.modal-body -->
     </div><!-- /.modal-content -->
   </div><!-- /.modal-dialog -->

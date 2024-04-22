@@ -3,7 +3,7 @@
 Plugin Name: Bootstrap Shortcoder
 Plugin URI: https://github.com/audioscavenger/bootstrap-shortcoder
 Description: The plugin adds a shortcodes for all Bootstrap 3 elements.
-Version: 4.0.1
+Version: 4.0.2
 Author: IT Cooking
 Author URI: https://gitea.derewonko.com/audioscavenger/bootstrap-shortcoder
 License: MIT
@@ -33,17 +33,18 @@ License: MIT
 			//Initialize shortcodes
 			add_action( 'init', array( $this, 'add_shortcodes' ) );
 
-			//Conditionally include tooltip functionality (see function for conditionals)
-			add_action( 'the_post', array( $this, 'bootstrap_shortcodes_tooltip_script' ), 9999 );
+			//Conditionally include tooltip functionality (see function for conditionals) // not since 4.0.0
+			// add_action( 'the_post', array( $this, 'bootstrap_shortcodes_tooltip_script' ), 9999 );
 
 			//Conditionally include popupver functionality (see function for conditionals)
-			add_action( 'the_post', array( $this, 'bootstrap_shortcodes_popover_script' ), 9999 );
+			// add_action( 'the_post', array( $this, 'bootstrap_shortcodes_popover_script' ), 9999 );
+			add_action( 'the_post', array( $this, 'bootstrap_shortcodes_popover_script' ) );
       
-			//Conditionally include bootstrap4-cards functionality
-			add_action( 'the_post', array( $this, 'bootstrap4_cards_styles' ), 9999 );
+			//Conditionally include bootstrap4-cards functionality // not since 4.0.0
+			// add_action( 'the_post', array( $this, 'bootstrap4_cards_styles' ), 9999 );
       
-			//Conditionally include bootstrap-callout functionality
-			add_action( 'the_post', array( $this, 'bootstrap_callout_styles' ), 9999 );
+			//Conditionally include bootstrap-callout functionality // not since 4.0.0
+			// add_action( 'the_post', array( $this, 'bootstrap_callout_styles' ), 9999 );
 		}
 
 	// ======================================================================== //
@@ -80,7 +81,8 @@ License: MIT
 					global $post;
 					if( has_shortcode( $post->post_content, 'popover')){
 							// Bootstrap popover js
-							wp_enqueue_script( 'bootstrap-shortcoder-popover', BS_SHORTCODES_URL . 'js/bootstrap-shortcoder-popover.js', array( 'jquery' ), false, true );
+							// wp_enqueue_script( 'bootstrap-shortcoder-popover', BS_SHORTCODES_URL . 'js/bootstrap-shortcoder-popover.js', array( 'jquery' ), false, true );
+							wp_enqueue_script( 'popper' );
 					}
 			}
 
@@ -90,14 +92,15 @@ License: MIT
  * new styles loaded only when using bootstrap 4 cards
  * @author Eric Derewonko
  * @since 3.4.0
+ * 4.0.0: bs 6.5 included
  * ======================================================================== */
 
-    function bootstrap4_cards_styles() {
-        global $post;
-        if( has_shortcode( $post->post_content, 'cards')){
-            wp_enqueue_style( 'bootstrap4-cards', BS_SHORTCODES_URL . 'css/wp-bootstrap4-cards.css' );
-        }
-    }
+    // function bootstrap4_cards_styles() {
+    //     global $post;
+    //     if( has_shortcode( $post->post_content, 'cards')){
+    //         wp_enqueue_style( 'bootstrap4-cards', BS_SHORTCODES_URL . 'css/wp-bootstrap4-cards.css' );
+    //     }
+    // }
 
 // ======================================================================== //
 
@@ -105,14 +108,15 @@ License: MIT
  * new styles loaded only when using bootstrap callout
  * @author Eric Derewonko
  * @since 3.4.0
+ * 4.0.0: bs 6.5 included
  * ======================================================================== */
 
-    function bootstrap_callout_styles() {
-        global $post;
-        if( has_shortcode( $post->post_content, 'callout')){
-            wp_enqueue_style( 'bootstrap-callout', BS_SHORTCODES_URL . 'css/wp-bootstrap-callout.css' );
-        }
-    }
+    // function bootstrap_callout_styles() {
+    //     global $post;
+    //     if( has_shortcode( $post->post_content, 'callout')){
+    //         wp_enqueue_style( 'bootstrap-callout', BS_SHORTCODES_URL . 'css/wp-bootstrap-callout.css' );
+    //     }
+    // }
 
 // ======================================================================== //
 
@@ -225,7 +229,7 @@ License: MIT
 		), $atts );
 
 		$class  = 'btn';
-		$class .= ( $atts['type'] )     ? ' btn-' . $atts['type'] : ' btn-default';
+		$class .= ( $atts['type'] )     ? ' btn-' . $atts['type'] : ' btn-primary';
 		$class .= ( $atts['size'] )     ? ' btn-' . $atts['size'] : '';
 		$class .= ( $atts['block'] == 'true' )    ? ' btn-block' : '';
 		$class .= ( $atts['dropdown']   == 'true' ) ? ' dropdown-toggle' : '';
@@ -1020,7 +1024,7 @@ License: MIT
 		), $atts );
 
 		$class  = 'label';
-		$class .= ( $atts['type'] )     ? ' label-' . $atts['type'] : ' label-default';
+		$class .= ( $atts['type'] )     ? ' label-' . $atts['type'] : ' label-primary';
 		$class .= ( $atts['xclass'] )   ? ' ' . $atts['xclass'] : '';
 
 		$data_props = $this->parse_data_attributes( $atts['data'] );
@@ -1223,7 +1227,7 @@ License: MIT
 		), $atts );
 
 		$class  = 'panel';
-		$class .= ( $atts['type'] )     ? ' panel-' . $atts['type'] : ' panel-default';
+		$class .= ( $atts['type'] )     ? ' panel-' . $atts['type'] : ' panel-primary';
 		$class .= ( $atts['xclass'] )   ? ' ' . $atts['xclass'] : '';
 
 		$data_props = $this->parse_data_attributes( $atts['data'] );
@@ -1336,7 +1340,7 @@ License: MIT
 		), $atts );
 
 		$class  = 'bs-callout';
-		$class .= ( $atts['type'] )     ? ' bs-callout-' . $atts['type'] : ' bs-callout-default';
+		$class .= ( $atts['type'] )     ? ' bs-callout-' . $atts['type'] : ' bs-callout-primary';
 		$class .= ( $atts['size'] )     ? ' bs-callout-' . $atts['size'] : ' bs-callout-lg';
 		$class .= ( $atts['xclass'] )   ? ' ' . $atts['xclass'] : '';
 
@@ -1693,7 +1697,7 @@ License: MIT
 		), $atts );
 
 		$panel_class = 'panel';
-		$panel_class .= ( $atts['type'] )     ? ' panel-' . $atts['type'] : ' panel-default';
+		$panel_class .= ( $atts['type'] )     ? ' panel-' . $atts['type'] : ' panel-primary';
 		$panel_class .= ( $atts['xclass'] )   ? ' ' . $atts['xclass'] : '';
 
 		$collapse_class = 'panel-collapse';

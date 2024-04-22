@@ -1,4 +1,4 @@
-<div class="tab-pane fade show active" id="bs-shortcode-reference-tab-pane" role="tabpanel" aria-labelledby="bs-shortcode-reference-tab" tabindex="0">
+<div class="tab-pane fade show active" id="shortcode-reference-tab-pane" role="tabpanel" aria-labelledby="shortcode-reference-tab" tabindex="0">
 <h2 id="shortcode-reference">Shortcode Reference</h2>
 <h3 id="css">CSS</h3>
 
@@ -9,11 +9,11 @@
     </div>
     <div class="card-block">
       <div class="btn-group btn-group-md">
-        <a href="#grid-66" class="btn btn-default">  6-6  </a>
-        <a href="#grid-444" class="btn btn-default"> 4-4-4 </a>
-        <a href="#grid-3333" class="btn btn-default">3-3-3-3</a>
-        <a href="#grid-84" class="btn btn-default">  8-4  </a>
-        <a href="#grid-48" class="btn btn-default">  4-8  </a>
+        <button data-h4="#bs-grid-66"   class="btn btn-primary">  6-6  </button>
+        <button data-h4="#bs-grid-444"  class="btn btn-primary"> 4-4-4 </button>
+        <button data-h4="#bs-grid-3333" class="btn btn-primary">3-3-3-3</button>
+        <button data-h4="#bs-grid-84"   class="btn btn-primary">  8-4  </button>
+        <button data-h4="#bs-grid-48"   class="btn btn-primary">  4-8  </button>
       </div>
     </div>
   </div>
@@ -25,19 +25,20 @@
       </div>
       <div class="card-block">
         <div class="btn-group btn-group-md">
-          <a href="#btn-default" data-bs-dismiss="modal" class="drop-code btn btn-default">default</a>
-          <a href="#btn-primary" data-bs-dismiss="modal" class="drop-code btn btn-primary">primary</a>
-          <a href="#btn-success" data-bs-dismiss="modal" class="drop-code btn btn-success">success</a>
-          <a href="#btn-info"    data-bs-dismiss="modal" class="drop-code btn btn-info">info</a>
-          <a href="#btn-warning" data-bs-dismiss="modal" class="drop-code btn btn-warning">warning</a>
-          <a href="#btn-danger"  data-bs-dismiss="modal" class="drop-code btn btn-danger">danger</a>
-          <a href="#btn-link"    data-bs-dismiss="modal" class="drop-code btn btn-link">link</a>
+          <button data-h4="#bs-btn-primary"   data-bs-dismiss="modal" class="btn btn-primary drop-code">primary</button>
+          <button data-h4="#bs-btn-secondary" data-bs-dismiss="modal" class="btn btn-secondary drop-code">secondary</button>
+          <button data-h4="#bs-btn-success"   data-bs-dismiss="modal" class="btn btn-success drop-code">success</button>
+          <button data-h4="#bs-btn-danger"    data-bs-dismiss="modal" class="btn btn-danger drop-code">danger</button>
+          <button data-h4="#bs-btn-warning"   data-bs-dismiss="modal" class="btn btn-warning drop-code">warning</button>
+          <button data-h4="#bs-btn-info"      data-bs-dismiss="modal" class="btn btn-info drop-code">info</button>
+          <button data-h4="#bs-btn-light"     data-bs-dismiss="modal" class="btn btn-light drop-code">light</button>
+          <button data-h4="#bs-btn-dark"      data-bs-dismiss="modal" class="btn btn-dark drop-code">dark</button>
+          <button data-h4="#bs-btn-link"      data-bs-dismiss="modal" class="btn btn-link drop-code">link</button>
         </div>
       </div>
     </div>
   </div>
 </div>
-
 
 <ul>
 <li><a href="#images">Images</a></li>
@@ -531,21 +532,25 @@
 <p><a href="http://getbootstrap.com/css/#tables">Bootstrap table documentation</a></p>
 <hr>
 <h3 id="buttons">Buttons</h3>
-<h4 id="bs-bs-btn-default">btn-default</h4>
-<pre><code>[button type=&quot;default&quot; size=&quot;md&quot; link=&quot;#&quot;] ... [/button]</code></pre>
-<h4 id="bs-bs-btn-primary">btn-primary</h4>
-<pre><code>[button type=&quot;primary&quot; size=&quot;md&quot; link=&quot;#&quot;] ... [/button]</code></pre>
-<h4 id="bs-btn-success">btn-success</h4>
-<pre><code>[button type=&quot;success&quot; size=&quot;md&quot; link=&quot;#&quot;] ... [/button]</code></pre>
-<h4 id="bs-btn-info">btn-info</h4>
-<pre><code>[button type=&quot;info&quot; size=&quot;md&quot; link=&quot;#&quot;] ... [/button]</code></pre>
-<h4 id="bs-btn-warning">btn-warning</h4>
-<pre><code>[button type=&quot;warning&quot; size=&quot;md&quot; link=&quot;#&quot;] ... [/button]</code></pre>
-<h4 id="bs-btn-danger">btn-danger</h4>
-<pre><code>[button type=&quot;danger&quot; size=&quot;md&quot; link=&quot;#&quot;] ... [/button]</code></pre>
-<h4 id="bs-btn-link">btn-link</h4>
-<pre><code>[button type=&quot;link&quot; size=&quot;md&quot; link=&quot;#&quot;] ... [/button]</code></pre>
-<h4 id="-button-parameters">[button] parameters</h4>
+<h3 id="btn-primary">btn-primary</h3>
+<pre><code>[button type=&quot;primary&quot; size=&quot;md&quot; link=&quot;#&quot;] primary [/button]</code></pre>
+<h3 id="btn-secondary">btn-secondary</h3>
+<pre><code>[button type=&quot;secondary&quot; size=&quot;md&quot; link=&quot;#&quot;] secondary [/button]</code></pre>
+<h3 id="btn-success">btn-success</h3>
+<pre><code>[button type=&quot;success&quot; size=&quot;md&quot; link=&quot;#&quot;] success [/button]</code></pre>
+<h3 id="btn-info">btn-info</h3>
+<pre><code>[button type=&quot;info&quot; size=&quot;md&quot; link=&quot;#&quot;] info [/button]</code></pre>
+<h3 id="btn-warning">btn-warning</h3>
+<pre><code>[button type=&quot;warning&quot; size=&quot;md&quot; link=&quot;#&quot;] warning [/button]</code></pre>
+<h3 id="btn-danger">btn-danger</h3>
+<pre><code>[button type=&quot;danger&quot; size=&quot;md&quot; link=&quot;#&quot;] danger [/button]</code></pre>
+<h3 id="btn-light">btn-light</h3>
+<pre><code>[button type=&quot;light&quot; size=&quot;md&quot; link=&quot;#&quot;] light [/button]</code></pre>
+<h3 id="btn-dark">btn-dark</h3>
+<pre><code>[button type=&quot;dark&quot; size=&quot;md&quot; link=&quot;#&quot;] dark [/button]</code></pre>
+<h3 id="btn-link">btn-link</h3>
+<pre><code>[button type=&quot;link&quot; size=&quot;md&quot; link=&quot;#&quot;] link [/button]</code></pre>
+<h3 id="-button-parameters">[button] parameters</h3>
 <table>
 <thead>
 <tr>
@@ -2643,7 +2648,7 @@
 <hr>
 </div>
 
-<div class="tab-pane fade" id="bs-requirements-tab-pane" role="tabpanel" aria-labelledby="bs-requirements-tab" tabindex="1">
+<div class="tab-pane fade" id="requirements-tab-pane" role="tabpanel" aria-labelledby="requirements-tab" tabindex="1">
 <h2 id="requirements">Requirements</h2>
 <p><img src="https://img.shields.io/wordpress/plugin/r/bootstrap-shortcoder.svg" alt="WordPress Rating"> <img src="https://img.shields.io/wordpress/plugin/dt/bootstrap-shortcoder.svg" alt="WordPress Downloads"></p>
 <p>WordPress plugin that provides shortcodes for easier use of the Bootstrap styles and components in your content.</p>

@@ -66,28 +66,19 @@
     //Function to register and enqueue the documentation stylesheets
     function bootstrap_shortcodes_help_styles() {
         // https://getbootstrap.com/docs/5.3/getting-started/download/#cdn-via-jsdelivr
-            // https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css
-            // https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js
-            // https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js     +popper
+        // https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css
+        // https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js        // shall be loaded conditionally
+        // https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js
+        // https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js     // +popper
 
-        // wp_register_style( 'bs-font', plugins_url( 'bootstrap-shortcoder/includes/help/bs-font.css' ) );  // useless fonts
-        // wp_register_style( 'bootstrap311-shortcoder-help', plugins_url( 'bootstrap-shortcoder/includes/help/css/bootstrap-shortcoder-help.3.1.1.css' ) ); // this includes bootstrap 3.11 pfff ridiculous
         wp_register_style( 'bootstrap53-css', 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css' );
-        // wp_register_style( 'bootstrap53-shortcoder-help', plugins_url( 'bootstrap-shortcoder/includes/help/css/bootstrap-shortcoder-help.5.3.css' ) );       // only modal stuff
-        // wp_register_style( 'bootstrap311-modal', 'bootstrap-shortcoder/includes/help/css/bootstrap-modal.3.1.1.css' );
-
-        // wp_register_script( 'bootstrap311-js', plugins_url( 'bootstrap-shortcoder/includes/help/js/bootstrap.min.js' ) );
-        // wp_register_script( 'bootstrap53-js', 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js' );
+        wp_register_script( 'popper', 'https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js' );
+        wp_register_script( 'bootstrap53-js', 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js' );
         wp_register_script( 'bootstrap53-js-bundle', 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js' );
 
-        // wp_enqueue_style( 'bs-font' );
-        // wp_enqueue_style( 'bootstrap311-shortcoder-help' );
-        // wp_enqueue_style( 'bootstrap53-shortcoder-help' );
         wp_enqueue_style( 'bootstrap53-css' );
-        // wp_enqueue_style( 'bootstrap311-modal' );
-
-        // wp_enqueue_script( 'bootstrap311-js' );
-        wp_enqueue_script( 'bootstrap53-js-bundle' );
+        wp_enqueue_script( 'popper' );                   // front is conditionally loaded by bootstrap_shortcodes_popover_script
+        wp_enqueue_script( 'bootstrap53-js' );
 
         //Visual Composer causes problems
         $handle = 'vc_bootstrap_js';
