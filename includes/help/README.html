@@ -1,20 +1,45 @@
-<h1 id="bootstrap-shortcoder-for-wordpress">Bootstrap Shortcoder for WordPress</h1>
-<p><img src="https://img.shields.io/wordpress/plugin/r/bootstrap-shortcoder.svg" alt="WordPress Rating"> <img src="https://img.shields.io/wordpress/plugin/dt/bootstrap-shortcoder.svg" alt="WordPress Downloads"></p>
-<p>WordPress plugin that provides shortcodes for easier use of the Bootstrap styles and components in your content.</p>
-<p><strong>Bootstrap Shortcoder for WordPress</strong> creates a simple, out of the way button just above the WordPress TinyMCE editor (next to the &quot;Add Media&quot; button) which pops up the plugin&#39;s documentation and shortcode examples for reference and handy &quot;Insert Example&quot; links to send the example shortcodes straight to the editor. There are no additional TinyMCE buttons to clutter up your screen, just great, easy to use shortcodes!</p>
-<h2 id="requirements">Requirements</h2>
-<p><img src="https://img.shields.io/wordpress/v/bootstrap-shortcoder.svg" alt="Tested in WordPress"> <img src="https://img.shields.io/badge/PHP-5.3%2B-blue.svg" alt="PHP 5.3+"> <img src="https://img.shields.io/badge/Bootstrap-3.3.x-6f5499.svg" alt="Bootstrap"></p>
-<p>This plugin won&#39;t do anything if you don&#39;t have WordPress theme built with the <a href="http://getbootstrap.com/">Bootstrap</a> framework. <strong>This plugin does not include the Bootstrap framework</strong>.</p>
-<p>The plugin is tested to work with <code>Bootstrap 3</code> and <code>WordPress 4.5</code> and <strong>requires PHP 5.3 or later</strong>.</p>
+<div class="tab-pane fade show active" id="bs-shortcode-reference-tab-pane" role="tabpanel" aria-labelledby="bs-shortcode-reference-tab" tabindex="0">
 <h2 id="shortcode-reference">Shortcode Reference</h2>
 <h3 id="css">CSS</h3>
+
+<div class="card-columns">
+  <div class="card">
+    <div class="card-header">
+      <a href="#grid">Grid</a>
+    </div>
+    <div class="card-block">
+      <div class="btn-group btn-group-md">
+        <a href="#grid-66" class="btn btn-default">  6-6  </a>
+        <a href="#grid-444" class="btn btn-default"> 4-4-4 </a>
+        <a href="#grid-3333" class="btn btn-default">3-3-3-3</a>
+        <a href="#grid-84" class="btn btn-default">  8-4  </a>
+        <a href="#grid-48" class="btn btn-default">  4-8  </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="card-columns">
+    <div class="card">
+      <div class="card-header">
+        <a href="#buttons">Buttons</a>
+      </div>
+      <div class="card-block">
+        <div class="btn-group btn-group-md">
+          <a href="#btn-default" data-bs-dismiss="modal" class="drop-code btn btn-default">default</a>
+          <a href="#btn-primary" data-bs-dismiss="modal" class="drop-code btn btn-primary">primary</a>
+          <a href="#btn-success" data-bs-dismiss="modal" class="drop-code btn btn-success">success</a>
+          <a href="#btn-info"    data-bs-dismiss="modal" class="drop-code btn btn-info">info</a>
+          <a href="#btn-warning" data-bs-dismiss="modal" class="drop-code btn btn-warning">warning</a>
+          <a href="#btn-danger"  data-bs-dismiss="modal" class="drop-code btn btn-danger">danger</a>
+          <a href="#btn-link"    data-bs-dismiss="modal" class="drop-code btn btn-link">link</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
 <ul>
-<li><a href="#grid">Grid</a></li>
-<li><a href="#lead-body-copy">Lead body copy</a></li>
-<li><a href="#emphasis-classes">Emphasis classes</a></li>
-<li><a href="#code">Code</a></li>
-<li><a href="#tables">Tables</a></li>
-<li><a href="#buttons">Buttons</a></li>
 <li><a href="#images">Images</a></li>
 <li><a href="#responsive-embeds">Responsive Embeds</a></li>
 <li><a href="#responsive-utilities">Responsive utilities</a></li>
@@ -506,8 +531,21 @@
 <p><a href="http://getbootstrap.com/css/#tables">Bootstrap table documentation</a></p>
 <hr>
 <h3 id="buttons">Buttons</h3>
-<pre><code>[button type=&quot;success&quot; size=&quot;lg&quot; link=&quot;#&quot;] ... [/button]
-</code></pre><h4 id="-button-parameters">[button] parameters</h4>
+<h4 id="bs-bs-btn-default">btn-default</h4>
+<pre><code>[button type=&quot;default&quot; size=&quot;md&quot; link=&quot;#&quot;] ... [/button]</code></pre>
+<h4 id="bs-bs-btn-primary">btn-primary</h4>
+<pre><code>[button type=&quot;primary&quot; size=&quot;md&quot; link=&quot;#&quot;] ... [/button]</code></pre>
+<h4 id="bs-btn-success">btn-success</h4>
+<pre><code>[button type=&quot;success&quot; size=&quot;md&quot; link=&quot;#&quot;] ... [/button]</code></pre>
+<h4 id="bs-btn-info">btn-info</h4>
+<pre><code>[button type=&quot;info&quot; size=&quot;md&quot; link=&quot;#&quot;] ... [/button]</code></pre>
+<h4 id="bs-btn-warning">btn-warning</h4>
+<pre><code>[button type=&quot;warning&quot; size=&quot;md&quot; link=&quot;#&quot;] ... [/button]</code></pre>
+<h4 id="bs-btn-danger">btn-danger</h4>
+<pre><code>[button type=&quot;danger&quot; size=&quot;md&quot; link=&quot;#&quot;] ... [/button]</code></pre>
+<h4 id="bs-btn-link">btn-link</h4>
+<pre><code>[button type=&quot;link&quot; size=&quot;md&quot; link=&quot;#&quot;] ... [/button]</code></pre>
+<h4 id="-button-parameters">[button] parameters</h4>
 <table>
 <thead>
 <tr>
@@ -2603,4 +2641,14 @@
 </table>
 <p><a href="http://getbootstrap.com/javascript/#modals">Bootstrap modal documentation</a></p>
 <hr>
+</div>
 
+<div class="tab-pane fade" id="bs-requirements-tab-pane" role="tabpanel" aria-labelledby="bs-requirements-tab" tabindex="1">
+<h2 id="requirements">Requirements</h2>
+<p><img src="https://img.shields.io/wordpress/plugin/r/bootstrap-shortcoder.svg" alt="WordPress Rating"> <img src="https://img.shields.io/wordpress/plugin/dt/bootstrap-shortcoder.svg" alt="WordPress Downloads"></p>
+<p>WordPress plugin that provides shortcodes for easier use of the Bootstrap styles and components in your content.</p>
+<p><strong>Bootstrap Shortcoder for WordPress</strong> creates a simple, out of the way button just above the WordPress TinyMCE editor (next to the &quot;Add Media&quot; button) which pops up the plugin&#39;s documentation and shortcode examples for reference and handy &quot;Insert Example&quot; links to send the example shortcodes straight to the editor. There are no additional TinyMCE buttons to clutter up your screen, just great, easy to use shortcodes!</p>
+<p><img src="https://img.shields.io/wordpress/v/bootstrap-shortcoder.svg" alt="Tested in WordPress"> <img src="https://img.shields.io/badge/PHP-5.3%2B-blue.svg" alt="PHP 5.3+"> <img src="https://img.shields.io/badge/Bootstrap-3.3.x-6f5499.svg" alt="Bootstrap"></p>
+<p>This plugin won&#39;t do anything if you don&#39;t have WordPress theme built with the <a href="http://getbootstrap.com/">Bootstrap</a> framework. <strong>This plugin does not include the Bootstrap framework</strong>.</p>
+<p>The plugin is tested to work with <code>Bootstrap 3</code> and <code>WordPress 4.5</code> and <strong>requires PHP 5.3 or later</strong>.</p>
+</div>

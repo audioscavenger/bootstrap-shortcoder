@@ -19,7 +19,7 @@
 // ======================================================================== // 
 
 
-  
+/* bootstrap-shortcoder-help-all is not needed
 // ======================================================================== //		
 // Enqueue help button styles
 // ======================================================================== // 
@@ -33,7 +33,7 @@
 
 // ======================================================================== // 
 
-
+ */
 
 // ======================================================================== //		
 // Function and filter to remove extra line breaks around shortcodes
@@ -60,17 +60,34 @@
 // ======================================================================== //		
 // Button creation and styles for the documentation popup button
 // ======================================================================== // 
+// scavenger: here we will start experimenting with BS 5.3
+// ======================================================================== // 
 
     //Function to register and enqueue the documentation stylesheets
     function bootstrap_shortcodes_help_styles() {
-        wp_register_style( 'bs-font', plugins_url( 'bootstrap-shortcoder/includes/help/bs-font.css' ) );
-        wp_register_style( 'bootstrap-shortcoder-help', plugins_url( 'bootstrap-shortcoder/includes/help/css/bootstrap-shortcoder-help.css' ) );
-        wp_register_style( 'bootstrap-modal', plugins_url( 'bootstrap-shortcoder/includes/help/css/bootstrap-modal.css' ) );
-        wp_register_script( 'bootstrap', plugins_url( 'bootstrap-shortcoder/includes/help/js/bootstrap.min.js' ) );
-        wp_enqueue_style( 'bootstrap-shortcoder-help' );
-        wp_enqueue_style( 'bootstrap-modal' );
-        wp_enqueue_style( 'bs-font' );
-        wp_enqueue_script( 'bootstrap' );
+        // https://getbootstrap.com/docs/5.3/getting-started/download/#cdn-via-jsdelivr
+            // https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css
+            // https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js
+            // https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js     +popper
+
+        // wp_register_style( 'bs-font', plugins_url( 'bootstrap-shortcoder/includes/help/bs-font.css' ) );  // useless fonts
+        // wp_register_style( 'bootstrap311-shortcoder-help', plugins_url( 'bootstrap-shortcoder/includes/help/css/bootstrap-shortcoder-help.3.1.1.css' ) ); // this includes bootstrap 3.11 pfff ridiculous
+        wp_register_style( 'bootstrap53-css', 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css' );
+        // wp_register_style( 'bootstrap53-shortcoder-help', plugins_url( 'bootstrap-shortcoder/includes/help/css/bootstrap-shortcoder-help.5.3.css' ) );       // only modal stuff
+        // wp_register_style( 'bootstrap311-modal', 'bootstrap-shortcoder/includes/help/css/bootstrap-modal.3.1.1.css' );
+
+        // wp_register_script( 'bootstrap311-js', plugins_url( 'bootstrap-shortcoder/includes/help/js/bootstrap.min.js' ) );
+        // wp_register_script( 'bootstrap53-js', 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js' );
+        wp_register_script( 'bootstrap53-js-bundle', 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js' );
+
+        // wp_enqueue_style( 'bs-font' );
+        // wp_enqueue_style( 'bootstrap311-shortcoder-help' );
+        // wp_enqueue_style( 'bootstrap53-shortcoder-help' );
+        wp_enqueue_style( 'bootstrap53-css' );
+        // wp_enqueue_style( 'bootstrap311-modal' );
+
+        // wp_enqueue_script( 'bootstrap311-js' );
+        wp_enqueue_script( 'bootstrap53-js-bundle' );
 
         //Visual Composer causes problems
         $handle = 'vc_bootstrap_js';
@@ -90,7 +107,7 @@
 
         //append the icon
         printf(
-        '<a data-toggle="modal" data-target="#bootstrap-shortcoder-help" title="%2$s" href="%3$s" class="%4$s"><span class="bs_bootstrap-logo wp-media-buttons-icon"></span></a>',
+        '<a data-bs-toggle="modal" data-bs-target="#bootstrap-shortcoder-help" title="%2$s" href="%3$s" class="%4$s"><span class="bs_bootstrap-logo wp-media-buttons-icon"></span></a>',
         esc_attr( $popup_id ),
         esc_attr( $title ),
         esc_url( '#' ),
@@ -111,13 +128,15 @@
 
 // ======================================================================== //		
 // Include the help popup content in the footer
+// scavenger: MY MY MY no wonder my admin was so slow...
 // ======================================================================== // 
 
-    function boostrap_shortcodes_help() {
+    function boostrap_shortcodes_help_after_mce() {
         include( BS_SHORTCODES_DIR . 'bootstrap-shortcoder-help.php');
     }
 
-    add_action( 'admin_footer', 'boostrap_shortcodes_help' );
+    // add_action( 'admin_footer', 'boostrap_shortcodes_help' );
+    add_action( 'after_wp_tiny_mce', 'boostrap_shortcodes_help_after_mce' );
 
 // ======================================================================== // 
 
@@ -142,7 +161,7 @@
 // ======================================================================== //
 
 
-
+/* bootstrap-shortcoder-help-all is not needed
 // ======================================================================== //		
 // Gravity Forms is bossy.
 // Register this script with Gravity Forms (if present) so it isn't stripped out
@@ -157,3 +176,4 @@
 
 // ======================================================================== //
 
+ */

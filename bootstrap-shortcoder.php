@@ -3,8 +3,8 @@
 Plugin Name: Bootstrap Shortcoder
 Plugin URI: https://github.com/audioscavenger/bootstrap-shortcoder
 Description: The plugin adds a shortcodes for all Bootstrap 3 elements.
-Version: 4.0.0
-Author: Doctus IT
+Version: 4.0.1
+Author: IT Cooking
 Author URI: https://gitea.derewonko.com/audioscavenger/bootstrap-shortcoder
 License: MIT
 */
@@ -580,7 +580,7 @@ License: MIT
 			( ! empty( $li_classes ) ) ? sprintf( ' class="%s"', esc_attr( $li_classes ) ) : '',
 			esc_url( $atts['link'] ),
 			( ! empty( $a_classes ) )  ? sprintf( ' class="%s"', esc_attr( $a_classes ) )  : '',
-			( $atts['dropdown'] )   ? ' data-toggle="dropdown"' : '',
+			( $atts['dropdown'] )   ? ' data-bs-toggle="dropdown"' : '',
 			( $data_props ) ? ' ' . $data_props : '',
 			do_shortcode( $content )
 		);
@@ -609,7 +609,7 @@ License: MIT
 		$class .= ( $atts['dismissable']   == 'true' )  ? ' alert-dismissable' : '';
 		$class .= ( $atts['xclass'] )       ? ' ' . $atts['xclass'] : '';
 
-		$dismissable = ( $atts['dismissable'] ) ? '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>' : '';
+		$dismissable = ( $atts['dismissable'] ) ? '<button type="button" class="close" data-bs-dismiss="alert" aria-hidden="true">&times;</button>' : '';
 
 		$data_props = $this->parse_data_attributes( $atts['data'] );
 
@@ -1559,7 +1559,7 @@ License: MIT
 				}
 
 				$tabs[] = sprintf(
-					'<li%s><a href="#%s" data-toggle="tab" >%s</a></li>',
+					'<li%s><a href="#%s" data-bs-toggle="tab" >%s</a></li>',
 					( !empty($class) ) ? ' class="' . $class . '"' : '',
 					sanitize_html_class($tab_id),
 					$tab["tab"]["title"]
@@ -1711,7 +1711,7 @@ License: MIT
 			'<div class="%1$s"%2$s>
 				<div class="panel-heading">
 					<h4 class="panel-title">
-						<a class="%3$s" data-toggle="collapse"%4$s href="#%5$s">%6$s</a>
+						<a class="%3$s" data-bs-toggle="collapse"%4$s href="#%5$s">%6$s</a>
 					</h4>
 				</div>
 				<div id="%5$s" class="%7$s">
@@ -1721,7 +1721,7 @@ License: MIT
 			esc_attr( $panel_class ),
 			( $data_props )   ? ' ' . $data_props : '',
 			$a_class,
-			( $parent )       ? ' data-parent="#' . $parent . '"' : '',
+			( $parent )       ? ' data-bs-parent="#' . $parent . '"' : '',
 			$current_collapse,
 			$atts['title'],
 			esc_attr( $collapse_class ),
@@ -1777,7 +1777,7 @@ License: MIT
 			$i = 0;
 			foreach( $atts_map as $slide ) {
 				$indicators[] = sprintf(
-					'<li class="%s" data-target="%s" data-slide-to="%s"></li>',
+					'<li class="%s" data-bs-target="%s" data-bs-slide-to="%s"></li>',
 					( !empty($slide["carousel-item"]["active"]) || ($GLOBALS['carousel_default_active'] && $i == 0) ) ? 'active' : '',
 					esc_attr( '#' . $id ),
 					esc_attr( $i )
@@ -1786,18 +1786,18 @@ License: MIT
 			}
 		}
 		return sprintf(
-			'<div class="%s" id="%s" data-ride="carousel"%s%s%s%s>%s<div class="%s">%s</div>%s%s</div>',
+			'<div class="%s" id="%s" data-bs-ride="carousel"%s%s%s%s>%s<div class="%s">%s</div>%s%s</div>',
 			esc_attr( $div_class ),
 			esc_attr( $id ),
-			( $atts['interval'] )   ? sprintf( ' data-interval="%d"', $atts['interval'] ) : '',
-			( $atts['pause'] )      ? sprintf( ' data-pause="%s"', esc_attr( $atts['pause'] ) ) : '',
-			( $atts['wrap'] == 'true' )       ? sprintf( ' data-wrap="%s"', esc_attr( $atts['wrap'] ) ) : '',
+			( $atts['interval'] )   ? sprintf( ' data-bs-interval="%d"', $atts['interval'] ) : '',
+			( $atts['pause'] )      ? sprintf( ' data-bs-pause="%s"', esc_attr( $atts['pause'] ) ) : '',
+			( $atts['wrap'] == 'true' )       ? sprintf( ' data-bs-wrap="%s"', esc_attr( $atts['wrap'] ) ) : '',
 			( $data_props ) ? ' ' . $data_props : '',
 			( $indicators ) ? '<ol class="carousel-indicators">' . implode( $indicators ) . '</ol>' : '',
 			esc_attr( $inner_class ),
 			do_shortcode( $content ),
-			'<a class="left carousel-control"  href="' . esc_url( '#' . $id ) . '" data-slide="prev"><span class="glyphicon glyphicon-chevron-left"></span></a>',
-			'<a class="right carousel-control" href="' . esc_url( '#' . $id ) . '" data-slide="next"><span class="glyphicon glyphicon-chevron-right"></span></a>'
+			'<a class="left carousel-control"  href="' . esc_url( '#' . $id ) . '" data-bs-slide="prev"><span class="glyphicon glyphicon-chevron-left"></span></a>',
+			'<a class="right carousel-control" href="' . esc_url( '#' . $id ) . '" data-bs-slide="next"><span class="glyphicon glyphicon-chevron-right"></span></a>'
 		);
 	}
 
@@ -2296,7 +2296,7 @@ License: MIT
 						<div class="modal-dialog %3$s">
 								<div class="modal-content">
 										<div class="modal-header">
-												<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+												<button type="button" class="close" data-bs-dismiss="modal" aria-hidden="true">&times;</button>
 												%4$s
 										</div>
 										<div class="modal-body">
@@ -2318,7 +2318,7 @@ License: MIT
 		}, 100,0);
 
 		return sprintf(
-			'<a data-toggle="modal" href="#%1$s" class="%2$s"%3$s>%4$s</a>',
+			'<a data-bs-toggle="modal" href="#%1$s" class="%2$s"%3$s>%4$s</a>',
 			esc_attr( $id ),
 			esc_attr( $a_class ),
 			( $data_props ) ? ' ' . $data_props : '',
@@ -2357,7 +2357,7 @@ License: MIT
 	/*--------------------------------------------------------------------------------------
 		*
 		* Parse data-attributes for shortcodes
-		*
+		* 
 		*-------------------------------------------------------------------------------------*/
 	function parse_data_attributes( $data ) {
 
@@ -2368,7 +2368,8 @@ License: MIT
 
 			foreach( $data as $d ) {
 				$d = explode( ',', $d );
-				$data_props .= sprintf( 'data-%s="%s" ', esc_html( $d[0] ), esc_attr( trim( $d[1] ) ) );
+				// scavenger warning: verify if that breaks anything
+				$data_props .= sprintf( 'data-bs-%s="%s" ', esc_html( $d[0] ), esc_attr( trim( $d[1] ) ) );
 			}
 		}
 		else {
@@ -2407,7 +2408,8 @@ License: MIT
 					$data = explode( '|', $data );
 					foreach( $data as $d ):
 					$d = explode(',',$d);
-					$dom->documentElement->setAttribute('data-'.$d[0],trim($d[1]));
+					// scavenger warning: make sure nothing breaks
+					$dom->documentElement->setAttribute('data-bs-'.$d[0],trim($d[1]));
 					endforeach;
 			}
 			return utf8_decode( $dom->saveXML($dom->documentElement) );
@@ -2443,7 +2445,8 @@ License: MIT
 											$data = explode( '|', $data );
 											foreach( $data as $d ):
 												$d = explode(',',$d);
-												$outputdom->documentElement->setAttribute('data-'.$d[0],trim($d[1]));
+												// scavenger warning: make sure nothing breaks
+												$outputdom->documentElement->setAttribute('data-bs-'.$d[0],trim($d[1]));
 											endforeach;
 									}
 							}

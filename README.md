@@ -1,20 +1,18 @@
 Bootstrap Shortcoder for WordPress
 ===
 
-![WordPress Rating](https://img.shields.io/badge/WP_Rating-5_stars-yellow) ![WordPress Downloads](https://img.shields.io/badge/WP_Downloads-1+_million-violet)
+![WordPress Rating](https://img.shields.io/wordpress/plugin/r/bootstrap-shortcoder.svg) ![WordPress Downloads](https://img.shields.io/wordpress/plugin/dt/bootstrap-shortcoder.svg)
 
 WordPress plugin that provides shortcodes for easier use of the Bootstrap styles and components in your content.
 
 **Bootstrap Shortcoder for WordPress** creates a simple, out of the way button just above the WordPress TinyMCE editor (next to the "Add Media" button) which pops up the plugin's documentation and shortcode examples for reference and handy "Insert Example" links to send the example shortcodes straight to the editor. There are no additional TinyMCE buttons to clutter up your screen, just great, easy to use shortcodes!
 
-**This is a fork** from _Bootstrap 3 Shortcodes_, that is deprecated and retired from WordPress repository.
-
 ## Requirements
-![WordPress 6.5](https://img.shields.io/badge/WordPress-6.5-green) ![PHP 5.3](https://img.shields.io/badge/PHP-5.3-blue) ![Bootstrap 4.3.1](https://img.shields.io/badge/Bootstrap-4.3.1-purple)
+![Tested in WordPress](https://img.shields.io/wordpress/v/bootstrap-shortcoder.svg) ![PHP 5.3+](https://img.shields.io/badge/PHP-5.3%2B-blue.svg) ![Bootstrap](https://img.shields.io/badge/Bootstrap-3.3.x-6f5499.svg)
 
 This plugin won't do anything if you don't have WordPress theme built with the [Bootstrap](http://getbootstrap.com/) framework. **This plugin does not include the Bootstrap framework**.
 
-The plugin is tested to work with ```Bootstrap 4``` and ```WordPress 6.5``` and **requires PHP 5.3 or later**. Tested with *PHP 8.2.17*.
+The plugin is tested to work with ```Bootstrap 3``` and ```WordPress 4.5``` and **requires PHP 5.3 or later**.
 
 ## Shortcode Reference
 
