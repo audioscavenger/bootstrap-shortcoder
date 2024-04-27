@@ -3,13 +3,20 @@
 Plugin Name: Bootstrap Shortcoder
 Plugin URI: https://github.com/audioscavenger/bootstrap-shortcoder
 Description: The plugin adds a shortcodes for all Bootstrap 3 elements.
-Version: 4.0.3
+Version: 4.0.4
 Author: IT Cooking
 Author URI: https://gitea.derewonko.com/audioscavenger/bootstrap-shortcoder
 License: MIT
 */
 
 /* ============================================================= */
+// https://codex.wordpress.org/Shortcode_API
+// https://getbootstrap.com/docs/5.3/helpers/color-background/
+// https://getbootstrap.com/docs/5.3/utilities/colors/
+// https://getbootstrap.com/docs/5.3/utilities/background/
+/* ============================================================= */
+$debug = false;
+// $debug = true;
 
 // ======================================================================== //
 // Include necessary functions and files
@@ -18,56 +25,6 @@ License: MIT
 require_once( 'includes/defaults.php' );
 require_once( 'includes/functions.php' );
 require_once( 'includes/actions-filters.php' );
-
-// ======================================================================== //
-
-// $shortcodes = array(
-  // 'accordion',
-  // 'accordion-body',
-  // 'accordion-button',
-  // 'accordion-collapse',
-  // 'accordion-header',
-  // 'accordion-item',
-  // 'alert',
-  // 'button',
-  // 'button-group',
-  // 'button-toolbar',
-  // 'callout',
-  // 'card',
-  // 'card-block',
-  // 'card-footer',
-  // 'card-header',
-  // 'cards',
-  // 'caret',
-  // 'carousel',
-  // 'carousel-item',
-  // 'collapse',
-  // 'collapsibles',
-  // 'column',
-  // 'container',
-  // 'container-fluid',
-  // 'divider',
-  // 'dropdown',
-  // 'dropdown-header',
-  // 'dropdown-item',
-  // 'jumbotron',
-  // 'list-group',
-  // 'list-group-item',
-  // 'list-group-item-heading',
-  // 'list-group-item-text',
-  // 'modal',
-  // 'modal-footer',
-  // 'nav',
-  // 'nav-item',
-  // 'popover',
-  // 'responsive',
-  // 'row',
-  // 'row-container',
-  // 'span',
-  // 'tab',
-  // 'tabs',
-  // 'tooltip',
-// );
 
 $shortcodes = array(
   'accordion',
@@ -84,10 +41,10 @@ $shortcodes = array(
   'button-group',
   'button-toolbar',
   'callout',
-  'card',
-  'card-block',
-  'card-footer',
   'card-header',
+  'card-footer',
+  'card-body',
+  'card',
   'cards',
   'caret',
   'carousel',
@@ -102,10 +59,8 @@ $shortcodes = array(
   'dropdown',
   'dropdown-header',
   'dropdown-item',
-  'embed-responsive',
   'emphasis',
   'icon',
-  'img',
   'jumbotron',
   'label',
   'lead',
@@ -113,30 +68,19 @@ $shortcodes = array(
   'list-group-item',
   'list-group-item-heading',
   'list-group-item-text',
-  'media',
-  'media-body',
-  'media-object',
   'modal',
   'modal-footer',
   'nav',
   'nav-item',
-  'page-header',
   'panel',
-  'panel-body',
-  'panel-footer',
-  'panel-heading',
   'popover',
   'progress',
   'progress-bar',
-  'responsive',
   'row',
   'row-container',
   'span',
   'tab',
-  'table',
-  'table-wrap',
   'tabs',
-  'thumbnail',
   'tooltip',
   'well',
 );
@@ -160,25 +104,29 @@ add_action( 'the_post', ['BoostrapShortcodes', 'bootstrap_shortcodes_popper_scri
 // Begin Shortcodes
 class BoostrapShortcodes {
   
-  private static $shortcodes = [];
+  public static $shortcodes = [];
+  public static $cards = 'group';
 
   static function bootstrap_shortcodes_popper_script()  {
     global $post;
     if ( has_shortcode( $post->post_content, 'popover') || has_shortcode( $post->post_content, 'tooltip') ) {
-      wp_enqueue_script( 'popper' );
+      wp_enqueue_script( 'popper', 'https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js' );
+      // wp_enqueue_script( 'popper' );
     }
   }
 
   static function register_shortcodes() {
     wp_enqueue_style( 'bs-callout', plugins_url( 'includes/css/bs-callout.css' , __FILE__ ));
-    
+    // wp_enqueue_style( 'bs-callout' );
+
     global $shortcodes;
     
     // add all these shortcodes to WP:
     foreach ( $shortcodes as $shortcode ) {
       // print_r($shortcode);
 
-      $function = 'bs_' . str_replace( '-', '_', $shortcode );
+      $function = str_replace( '-', '_', $shortcode );
+      $function = str_replace( 'card-block', 'card-body', $function );  // retro-compat
       add_shortcode( $shortcode, ['BoostrapShortcodes', $function] );
       
     } // foreach
@@ -188,10 +136,10 @@ class BoostrapShortcodes {
 
 /*--------------------------------------------------------------------------------------
   *
-  * bs_alert
+  * alert
   *
   *-------------------------------------------------------------------------------------*/
-  static function bs_alert( $atts, $content = null ) {
+  static function alert( $atts, $content = null ) {
 
     $atts = shortcode_atts( array(
         "type"          => false,
@@ -208,7 +156,6 @@ class BoostrapShortcodes {
     $dismissable = ( $atts['dismissable'] ) ? '<button type="button" class="close" data-bs-dismiss="alert" aria-hidden="true">&times;</button>' : '';
   
     $data_props = self::parse_data_attributes( $atts['data'] );
-  
     return sprintf(
       '<div class="%s"%s>%s%s</div>',
       esc_attr( trim($class) ),
@@ -219,53 +166,49 @@ class BoostrapShortcodes {
   }
   
   
-  static function bs_button( $atts, $content = null ) {
+  static function button( $atts, $content = null ) {
 
-  $atts = shortcode_atts( array(
-    "type"     => false,
-    "size"     => false,
-    "block"    => false,
-    "dropdown" => false,
-    "link"     => '',
-    "target"   => false,
-    "disabled" => false,
-    "active"   => false,
-    "xclass"   => false,
-    "title"    => false,
-    "data"     => false
-  ), $atts );
+    $atts = shortcode_atts( array(
+      "type"     => false,
+      "size"     => false,
+      "xclass"   => false,
+      "block"    => false,
+      "dropdown" => false,
+      "link"     => '',
+      "target"   => false,
+      "disabled" => false,
+      "active"   => false,
+      "title"    => false,
+      "data"     => false,
+    ), $atts );
 
-  $class  = 'btn';
-  $class .= ( $atts['type'] )     ? ' btn-' . $atts['type'] : ' btn-primary';
-  $class .= ( $atts['size'] )     ? ' btn-' . $atts['size'] : '';
-  $class .= ( $atts['block'] == 'true' )    ? ' btn-block' : '';
-  $class .= ( $atts['dropdown']   == 'true' ) ? ' dropdown-toggle' : '';
-  $class .= ( $atts['disabled']   == 'true' ) ? ' disabled' : '';
-  $class .= ( $atts['active']     == 'true' )   ? ' active' : '';
-  $class .= ( $atts['xclass'] )   ? ' ' . $atts['xclass'] : '';
+    $class  = 'btn';
+    $class .= ( $atts['type'] )     ? ' btn-' . $atts['type'] : ' btn-primary';
+    $class .= ( $atts['size'] )     ? ' btn-' . $atts['size'] : '';
+    $class .= ( $atts['block'] == 'true' )    ? ' btn-block' : '';
+    $class .= ( $atts['dropdown']   == 'true' ) ? ' dropdown-toggle' : '';
+    $class .= ( $atts['disabled']   == 'true' ) ? ' disabled' : '';
+    $class .= ( $atts['active']     == 'true' )   ? ' active' : '';
+    $class .= ( $atts['xclass'] )   ? ' ' . $atts['xclass'] : '';
 
-  // $data_props = self::parse_data_attributes( $atts['data'] ); // PHP Fatal error:  Uncaught Error: Using $this when not in object context
-  // $data_props = BoostrapShortcodes::parse_data_attributes( $atts['data'] );
-  $data_props = self::parse_data_attributes( $atts['data'] );
-
-  return sprintf(
-    '<a href="%s" class="%s"%s%s%s>%s</a>',
-    esc_url( $atts['link'] ),
-    esc_attr( trim($class) ),
-    ( $atts['target'] )     ? sprintf( ' target="%s"', esc_attr( $atts['target'] ) ) : '',
-    ( $atts['title'] )      ? sprintf( ' title="%s"',  esc_attr( $atts['title'] ) )  : '',
-    ( $data_props ) ? ' ' . $data_props : '',
-    do_shortcode( $content )
-  );
+    return sprintf(
+      '<a href="%s" class="%s"%s%s%s>%s</a>',
+      esc_url( $atts['link'] ),
+      esc_attr( trim($class) ),
+      ( $atts['target'] )     ? sprintf( ' target="%s"', esc_attr( $atts['target'] ) ) : '',
+      ( $atts['title'] )      ? sprintf( ' title="%s"',  esc_attr( $atts['title'] ) )  : '',
+      self::parse_data_attributes( $atts['data'] ),
+      do_shortcode( $content )
+    );
 
   }
 
     /*--------------------------------------------------------------------------------------
     *
-    * bs_button_group
+    * button_group
     *
     *-------------------------------------------------------------------------------------*/
-  static function bs_button_group( $atts, $content = null ) {
+  static function button_group( $atts, $content = null ) {
 
     $atts = shortcode_atts( array(
         "size"      => false,
@@ -283,247 +226,316 @@ class BoostrapShortcodes {
     $class .= ( $atts['dropup']     == 'true' )       ? ' dropup' : '';
     $class .= ( $atts['xclass'] )       ? ' ' . $atts['xclass'] : '';
 
-    $data_props = self::parse_data_attributes( $atts['data'] );
 
     return sprintf(
       '<div class="%s"%s>%s</div>',
       esc_attr( trim($class) ),
-      ( $data_props ) ? ' ' . $data_props : '',
+      self::parse_data_attributes( $atts['data'] ),
       do_shortcode( $content )
     );
   }
 
 
-    
-  static function bs_callout( $atts, $content = null ) {
-    // print_r('bs_callout called ');
+    /*--------------------------------------------------------------------------------------
+    *
+    * callout
+    *
+    *-------------------------------------------------------------------------------------*/
+  static function callout( $atts, $content = null  ) {
+    // print_r(' '.__FUNCTION__.' '.$atts['type']);
+    // shortcode_atts https://developer.wordpress.org/reference/functions/shortcode_atts/
     $atts = shortcode_atts( array(
         "type"   => false,
         "size"   => false,
         "xclass" => false,
-        "data"   => false
+        "data"   => false,
     ), $atts );
+    // print_r(var_export($atts,true));
+    // array(4) { // passed stuff from the shortcodes
+      // ["type"]=> string(7) "primary" 
+      // ["size"]=> string(2) "xl" 
+      // ["xclass"]=> bool(false) 
+      // ["data"]=> bool(false)
+    // } 
 
-    $class  = 'bs-callout';
-    $class .= ( $atts['type'] )     ? ' bs-callout-' . $atts['type'] : ' bs-callout-primary';
-    $class .= ( $atts['size'] )     ? ' bs-callout-' . $atts['size'] : ' bs-callout-lg';
+    // it looks like we cannot input the defaults directly in $atts = shortcode_atts()
+    // because the class values need to be prepended by callout- or whatever function this is
+    $class  = 'callout';
+    $class .= ( $atts['type'] )     ? ' callout-' . $atts['type'] : '';
+    $class .= ( $atts['size'] )     ? ' callout-' . $atts['size'] : ' callout-lg';
     $class .= ( $atts['xclass'] )   ? ' ' . $atts['xclass'] : '';
 
-    // $data_props = self::parse_data_attributes( $atts['data'] );
-    $data_props = self::parse_data_attributes( $atts['data'] );
-    
     return sprintf(
       '<div class="%s"%s>%s</div>',
       esc_attr( trim($class) ),
-      ( $data_props ) ? ' ' . $data_props : '',
+      self::parse_data_attributes( $atts['data'] ),
       do_shortcode( $content )
     );
   }
 
 /*--------------------------------------------------------------------------------------
   *
-  * bs_card_block
+  * cards
   *
-  * @since 3.4.0
-  *
+  * @author Eric Derewonko
+  * https://getbootstrap.com/docs/5.3/components/card/#card-layout
+  * type =    group grid masonry
+  * grid:     simply add a row [+col wrapper] to eache card
+  * masonry:  must enqueue script "https://cdn.jsdelivr.net/npm/masonry-layout@4.2.2/dist/masonry.pkgd.min.js"
+  * 
+  * https://getbootstrap.com/docs/5.3/components/card/#masonry
+  * In v4 we used a CSS-only technique to mimic the behavior of Masonry-like columns, 
+  * but this technique came with lots of unpleasant side effects. If you want to have 
+  * this type of layout in v5, you can just make use of Masonry plugin. Masonry is not included in Bootstrap
+  * https://getbootstrap.com/docs/5.3/examples/masonry/
+  * 
+  * how do we add a column to the child, when the parent is card-grid (has .row)? we can't.
+  * solution 1: https://wordpress.stackexchange.com/questions/4088/pass-variable-to-nested-shortcode - complex and stupid
+  * solution 2: use $GLOBALS['variable']
+  * '<div class="col"><div class="%s"%s>%s</div></div>',
   *-------------------------------------------------------------------------------------*/
-  static function bs_card_block( $atts, $content = null ) {
-
+  static function cards( $atts, $content = null ) {
+    $atts = shortcode_atts( array(
+        "type"    => 'group',
+        "cols"    => 2,
+        "xclass"  => false,
+        "data"    => false
+    ), $atts );
+  
+    // this will be reset each time we start a new cards container
+    $cardColOpen = $cardColClose = '';
+    self::$cards = $atts['type'];
+          if (self::$cards == 'group') {
+      $class  = 'card-group';
+    } elseif (self::$cards == 'grid') {
+      $class  = 'row row-cols-1 row-cols-md-'.$atts['cols'];
+    } elseif (self::$cards == 'masonry') {
+      $class = 'masonry';
+    }
+    $class .= ( $atts['xclass'] )   ? ' ' . $atts['xclass'] : '';
+  
+  
+    // global $debug; $pre = ($debug) ? '<pre> '.var_export($atts,true).' </pre><br>' : '';
+    global $debug; $pre = ($debug) ? '<pre> '.__FUNCTION__.' </pre><br>' : '';
+    return sprintf($pre.
+      '<div class="%s"%s>%s</div>',
+      esc_attr( trim($class) ),
+      self::parse_data_attributes( $atts['data'] ),
+      do_shortcode( $content )
+    );
+  }
+  
+  /*--------------------------------------------------------------------------------------
+  *
+  * card
+  * https://getbootstrap.com/docs/5.3/components/card/
+  * equal height: add .h-100
+  *
+  * https://getbootstrap.com/docs/5.3/helpers/color-background/
+  * https://getbootstrap.com/docs/5.3/utilities/colors/
+  * https://getbootstrap.com/docs/5.3/utilities/background/
+  *
+  * type=primary secondary etc -> class=text-bg-*
+  * 
+  * how do we add a column to the child, when the parent is card-grid (has .row)? we can't.
+  * solution 1: https://wordpress.stackexchange.com/questions/4088/pass-variable-to-nested-shortcode - complex and stupid
+  * solution 2: use $GLOBALS['variable']
+  * '<div class="col"><div class="%s"%s>%s</div></div>',
+  *-------------------------------------------------------------------------------------*/
+  static function card( $atts, $content = null ) {
     $atts = shortcode_atts( array(
         "type"   => false,
-        "xclass" => false,
-        "data"   => false
-    ), $atts );
-  
-    $class  = 'card-block';
-    $class .= ( $atts['type'] )     ? ' card-' . $atts['type'] : '';
-    $class .= ( $atts['xclass'] )   ? ' ' . $atts['xclass'] : '';
-  
-    $data_props = self::parse_data_attributes( $atts['data'] );
-  
-    return sprintf(
-      '<div class="%s"%s>%s</div>',
-      esc_attr( trim($class) ),
-      ( $data_props ) ? ' ' . $data_props : '',
-      do_shortcode( $content )
-    );
-  }
-
-    
-    /*--------------------------------------------------------------------------------------
-    *
-    * bs_card_header
-    *
-    * @author Eric Derewonko
-    * @since 3.4.0
-    *
-    *-------------------------------------------------------------------------------------*/
-  static function bs_card_header( $atts, $content = null ) {
-    $atts = shortcode_atts( array(
-        "xclass" => false,
-        "data"   => false
-    ), $atts );
-
-    $class  = 'card-header';
-    $class .= ( $atts['xclass'] )   ? ' ' . $atts['xclass'] : '';
-
-    $data_props = self::parse_data_attributes( $atts['data'] );
-
-    return sprintf(
-      '<div class="%s"%s>%s</div>',
-      esc_attr( trim($class) ),
-      ( $data_props ) ? ' ' . $data_props : '',
-      do_shortcode( $content )
-    );
-  }
-
-/*--------------------------------------------------------------------------------------
-  *
-  * bs_card
-  *
-  * @since 3.4.0
-  *
-  *-------------------------------------------------------------------------------------*/
-  static function bs_card( $atts, $content = null ) {
-    $atts = shortcode_atts( array(
-        "type" => false,
         "xclass" => false,
         "data"   => false
     ), $atts );
   
     $class  = 'card';
-    $class .= ( $atts['type'] )     ? ' card-' . $atts['type'] : '';
+    $class .= ( $atts['type'] )     ? ' text-bg-' . $atts['type'] : '';
     $class .= ( $atts['xclass'] )   ? ' ' . $atts['xclass'] : '';
   
-    $data_props = self::parse_data_attributes( $atts['data'] );
+    $cardColOpen = $cardColClose = '';
+    if (self::$cards == 'grid') {
+      $cardColOpen  = '<div class="col">';
+      $cardColClose = '</div>';
+    }
   
-    return sprintf(
-      '<div class="%s"%s>%s</div>',
+    // global $debug; $pre = ($debug) ? '<pre> '.var_export($atts,true).' </pre><br>' : '';
+    global $debug; $pre = ($debug) ? '<pre> '.__FUNCTION__.' </pre><br>' : '';
+
+    return sprintf($pre.
+      $cardColOpen.'<div class="%s"%s>%s</div>'.$cardColClose,
       esc_attr( trim($class) ),
-      ( $data_props ) ? ' ' . $data_props : '',
+      self::parse_data_attributes( $atts['data'] ),
       do_shortcode( $content )
     );
   }
-  
-/*--------------------------------------------------------------------------------------
+
+
+  /*--------------------------------------------------------------------------------------
   *
-  * bs_cards
+  * card_header
   *
-  * @author Eric Derewonko
-  * @since 3.4.0
+  * https://getbootstrap.com/docs/5.3/helpers/color-background/
+  * https://getbootstrap.com/docs/5.3/utilities/colors/
+  * https://getbootstrap.com/docs/5.3/utilities/background/
+  *
+  * type=primary secondary etc -> class=text-bg-*
+  *-------------------------------------------------------------------------------------*/
+  static function card_header( $atts, $content = null ) {
+    $atts = shortcode_atts( array(
+        "type"   => false,
+        "xclass" => false,
+        "data"   => false
+    ), $atts );
+
+    $class  = 'card-header';
+    $class .= ( $atts['type'] )     ? ' text-bg-' . $atts['type'] : '';
+    $class .= ( $atts['xclass'] )   ? ' ' . $atts['xclass'] : '';
+
+
+    // global $debug; $pre = ($debug) ? '<pre> '.var_export($atts,true).' </pre><br>' : '';
+    global $debug; $pre = ($debug) ? '<pre> '.__FUNCTION__.' </pre><br>' : '';
+    return sprintf($pre.
+      '<div class="%s"%s>%s</div>',
+      esc_attr( trim($class) ),
+      self::parse_data_attributes( $atts['data'] ),
+      do_shortcode( $content )
+    );
+  }
+
+
+  /*--------------------------------------------------------------------------------------
+  *
+  * card_body
+  *
+  * https://getbootstrap.com/docs/5.3/helpers/color-background/
+  * https://getbootstrap.com/docs/5.3/utilities/colors/
+  * https://getbootstrap.com/docs/5.3/utilities/background/
+  *
+  * type=primary secondary etc -> class=text-bg-*
+  *-------------------------------------------------------------------------------------*/
+  static function card_body( $atts, $content = null ) {
+    $atts = shortcode_atts( array(
+        "type"   => false,
+        "xclass" => false,
+        "data"   => false
+    ), $atts );
+
+    $class  = 'card-body';
+    $class .= ( $atts['type'] )     ? ' text-bg-' . $atts['type'] : '';
+    $class .= ( $atts['xclass'] )   ? ' ' . $atts['xclass'] : '';
+
+
+    // global $debug; $pre = ($debug) ? '<pre> '.var_export($atts,true).' </pre><br>' : '';
+    global $debug; $pre = ($debug) ? '<pre> '.__FUNCTION__.' </pre><br>' : '';
+    return sprintf($pre.
+      '<div class="%s"%s>%s</div>',
+      esc_attr( trim($class) ),
+      self::parse_data_attributes( $atts['data'] ),
+      do_shortcode( $content )
+    );
+  }
+
+  /*--------------------------------------------------------------------------------------
+  *
+  * card_footer
+  *
+  * https://getbootstrap.com/docs/5.3/helpers/color-background/
+  * https://getbootstrap.com/docs/5.3/utilities/colors/
+  * https://getbootstrap.com/docs/5.3/utilities/background/
+  *
+  * type=primary secondary etc -> class=text-bg-*
   *
   *-------------------------------------------------------------------------------------*/
-  static function bs_cards( $atts, $content = null ) {
+  static function card_footer( $atts, $content = null ) {
     $atts = shortcode_atts( array(
-        "xclass"  => false,
-        "data"    => false
+        "type"   => false,
+        "xclass" => false,
+        "data"   => false
     ), $atts );
-  
-    $class  = 'card-columns';
+
+    $class  = 'card-footer';
+    $class .= ( $atts['type'] )     ? ' text-bg-' . $atts['type'] : '';
     $class .= ( $atts['xclass'] )   ? ' ' . $atts['xclass'] : '';
-  
-    $data_props = self::parse_data_attributes( $atts['data'] );
-  
-    return sprintf(
+
+
+    // global $debug; $pre = ($debug) ? '<pre> '.var_export($atts,true).' </pre><br>' : '';
+    global $debug; $pre = ($debug) ? '<pre> '.__FUNCTION__.' </pre><br>' : '';
+    return sprintf($pre.
       '<div class="%s"%s>%s</div>',
       esc_attr( trim($class) ),
-      ( $data_props ) ? ' ' . $data_props : '',
+      self::parse_data_attributes( $atts['data'] ),
       do_shortcode( $content )
     );
   }
-  
+
+
     
   /*--------------------------------------------------------------------------------------
   *
-  * bs_column
+  * column
   *
   * @author Simon Yeldon
   * @since 1.0
   * @todo pull and offset
   *-------------------------------------------------------------------------------------*/
-  static function bs_column( $atts, $content = null ) {
+  static function column( $atts, $content = null ) {
 
-  $atts = shortcode_atts( array(
-      "lg"          => false,
-      "md"          => false,
-      "sm"          => false,
-      "xs"          => false,
-      "offset_lg"   => false,
-      "offset_md"   => false,
-      "offset_sm"   => false,
-      "offset_xs"   => false,
-      "pull_lg"     => false,
-      "pull_md"     => false,
-      "pull_sm"     => false,
-      "pull_xs"     => false,
-      "push_lg"     => false,
-      "push_md"     => false,
-      "push_sm"     => false,
-      "push_xs"     => false,
-      "xclass"      => false,
-      "data"        => false
-  ), $atts );
+    $atts = shortcode_atts( array(
+        "lg"          => false,
+        "md"          => false,
+        "sm"          => false,
+        "xs"          => false,
+        "offset_lg"   => false,
+        "offset_md"   => false,
+        "offset_sm"   => false,
+        "offset_xs"   => false,
+        "pull_lg"     => false,
+        "pull_md"     => false,
+        "pull_sm"     => false,
+        "pull_xs"     => false,
+        "push_lg"     => false,
+        "push_md"     => false,
+        "push_sm"     => false,
+        "push_xs"     => false,
+        "xclass"      => false,
+        "data"        => false
+    ), $atts );
 
-  $class  = '';
-  $class .= ( $atts['lg'] )			                                ? ' col-lg-' . $atts['lg'] : '';
-  $class .= ( $atts['md'] )                                           ? ' col-md-' . $atts['md'] : '';
-  $class .= ( $atts['sm'] )                                           ? ' col-sm-' . $atts['sm'] : '';
-  $class .= ( $atts['xs'] )                                           ? ' col-xs-' . $atts['xs'] : '';
-  $class .= ( $atts['offset_lg'] || $atts['offset_lg'] === "0" )      ? ' col-lg-offset-' . $atts['offset_lg'] : '';
-  $class .= ( $atts['offset_md'] || $atts['offset_md'] === "0" )      ? ' col-md-offset-' . $atts['offset_md'] : '';
-  $class .= ( $atts['offset_sm'] || $atts['offset_sm'] === "0" )      ? ' col-sm-offset-' . $atts['offset_sm'] : '';
-  $class .= ( $atts['offset_xs'] || $atts['offset_xs'] === "0" )      ? ' col-xs-offset-' . $atts['offset_xs'] : '';
-  $class .= ( $atts['pull_lg']   || $atts['pull_lg'] === "0" )        ? ' col-lg-pull-' . $atts['pull_lg'] : '';
-  $class .= ( $atts['pull_md']   || $atts['pull_md'] === "0" )        ? ' col-md-pull-' . $atts['pull_md'] : '';
-  $class .= ( $atts['pull_sm']   || $atts['pull_sm'] === "0" )        ? ' col-sm-pull-' . $atts['pull_sm'] : '';
-  $class .= ( $atts['pull_xs']   || $atts['pull_xs'] === "0" )        ? ' col-xs-pull-' . $atts['pull_xs'] : '';
-  $class .= ( $atts['push_lg']   || $atts['push_lg'] === "0" )        ? ' col-lg-push-' . $atts['push_lg'] : '';
-  $class .= ( $atts['push_md']   || $atts['push_md'] === "0" )        ? ' col-md-push-' . $atts['push_md'] : '';
-  $class .= ( $atts['push_sm']   || $atts['push_sm'] === "0" )        ? ' col-sm-push-' . $atts['push_sm'] : '';
-  $class .= ( $atts['push_xs']   || $atts['push_xs'] === "0" )        ? ' col-xs-push-' . $atts['push_xs'] : '';
-  $class .= ( $atts['xclass'] )                                       ? ' ' . $atts['xclass'] : '';
+    $class  = '';
+    $class .= ( $atts['lg'] )			                                ? ' col-lg-' . $atts['lg'] : '';
+    $class .= ( $atts['md'] )                                           ? ' col-md-' . $atts['md'] : '';
+    $class .= ( $atts['sm'] )                                           ? ' col-sm-' . $atts['sm'] : '';
+    $class .= ( $atts['xs'] )                                           ? ' col-xs-' . $atts['xs'] : '';
+    $class .= ( $atts['offset_lg'] || $atts['offset_lg'] === "0" )      ? ' col-lg-offset-' . $atts['offset_lg'] : '';
+    $class .= ( $atts['offset_md'] || $atts['offset_md'] === "0" )      ? ' col-md-offset-' . $atts['offset_md'] : '';
+    $class .= ( $atts['offset_sm'] || $atts['offset_sm'] === "0" )      ? ' col-sm-offset-' . $atts['offset_sm'] : '';
+    $class .= ( $atts['offset_xs'] || $atts['offset_xs'] === "0" )      ? ' col-xs-offset-' . $atts['offset_xs'] : '';
+    $class .= ( $atts['pull_lg']   || $atts['pull_lg'] === "0" )        ? ' col-lg-pull-' . $atts['pull_lg'] : '';
+    $class .= ( $atts['pull_md']   || $atts['pull_md'] === "0" )        ? ' col-md-pull-' . $atts['pull_md'] : '';
+    $class .= ( $atts['pull_sm']   || $atts['pull_sm'] === "0" )        ? ' col-sm-pull-' . $atts['pull_sm'] : '';
+    $class .= ( $atts['pull_xs']   || $atts['pull_xs'] === "0" )        ? ' col-xs-pull-' . $atts['pull_xs'] : '';
+    $class .= ( $atts['push_lg']   || $atts['push_lg'] === "0" )        ? ' col-lg-push-' . $atts['push_lg'] : '';
+    $class .= ( $atts['push_md']   || $atts['push_md'] === "0" )        ? ' col-md-push-' . $atts['push_md'] : '';
+    $class .= ( $atts['push_sm']   || $atts['push_sm'] === "0" )        ? ' col-sm-push-' . $atts['push_sm'] : '';
+    $class .= ( $atts['push_xs']   || $atts['push_xs'] === "0" )        ? ' col-xs-push-' . $atts['push_xs'] : '';
+    $class .= ( $atts['xclass'] )                                       ? ' ' . $atts['xclass'] : '';
 
-  $data_props = self::parse_data_attributes( $atts['data'] );
 
-  return sprintf(
-    '<div class="%s"%s>%s</div>',
-    esc_attr( trim($class) ),
-    ( $data_props ) ? ' ' . $data_props : '',
-    do_shortcode( $content )
-  );
+    return sprintf(
+      '<div class="%s"%s>%s</div>',
+      esc_attr( trim($class) ),
+      self::parse_data_attributes( $atts['data'] ),
+      do_shortcode( $content )
+    );
   }
 
 /*--------------------------------------------------------------------------------------
- *
- * bs_container_fluid
- *
- *-------------------------------------------------------------------------------------*/
-function bs_container_fluid( $atts, $content = null ) {
-
-  $atts = shortcode_atts( array(
-      "xclass" => false,
-      "data"   => false
-  ), $atts );
- 
-  $class  = 'container-fluid';
-  $class .= ( $atts['xclass'] )   ? ' ' . $atts['xclass'] : '';
- 
-  $data_props = self::parse_data_attributes( $atts['data'] );
- 
-  return sprintf(
-    '<div class="%s"%s>%s</div>',
-    esc_attr( trim($class) ),
-    ( $data_props ) ? ' ' . $data_props : '',
-    do_shortcode( $content )
-  );
- }
- 
-/*--------------------------------------------------------------------------------------
   *
-  * bs_container
+  * container
   *
   *-------------------------------------------------------------------------------------*/
-  static function bs_container( $atts, $content = null ) {
+  static function container( $atts, $content = null ) {
 
     $atts = shortcode_atts( array(
         "fluid"  => false,
@@ -534,48 +546,46 @@ function bs_container_fluid( $atts, $content = null ) {
     $class  = ( $atts['fluid']   == 'true' )  ? 'container-fluid' : 'container';
     $class .= ( $atts['xclass'] )   ? ' ' . $atts['xclass'] : '';
   
-    $data_props = self::parse_data_attributes( $atts['data'] );
   
     return sprintf(
       '<div class="%s"%s>%s</div>',
       esc_attr( trim($class) ),
-      ( $data_props ) ? ' ' . $data_props : '',
+      self::parse_data_attributes( $atts['data'] ),
       do_shortcode( $content )
     );
   }
   
   
-/*--------------------------------------------------------------------------------------
-*
-* bs_dropdown_divider
-* used in button
-*-------------------------------------------------------------------------------------*/
-function bs_divider( $atts, $content = null ) {
+  /*--------------------------------------------------------------------------------------
+  *
+  * dropdown_divider
+  * used in button
+  *-------------------------------------------------------------------------------------*/
+  static function divider( $atts, $content = null ) {
 
-  $atts = shortcode_atts( array(
-      "xclass" => false,
-      "data" => false
-  ), $atts );
+    $atts = shortcode_atts( array(
+        "xclass" => false,
+        "data" => false
+    ), $atts );
 
-  $class  = 'divider';
-  $class .= ( $atts['xclass'] )   ? ' ' . $atts['xclass'] : '';
+    $class  = 'divider';
+    $class .= ( $atts['xclass'] )   ? ' ' . $atts['xclass'] : '';
 
-  $data_props = self::parse_data_attributes( $atts['data'] );
 
-  return sprintf(
-    '<li class="%s"%s>%s</li>',
-    esc_attr( trim($class) ),
-    ( $data_props ) ? ' ' . $data_props : '',
-    do_shortcode( $content )
-  );
-}
+    return sprintf(
+      '<li class="%s"%s>%s</li>',
+      esc_attr( trim($class) ),
+      self::parse_data_attributes( $atts['data'] ),
+      do_shortcode( $content )
+    );
+  }
 
 /*--------------------------------------------------------------------------------------
   *
-  * bs_dropdown_item
+  * dropdown_item
   * used in button
   *-------------------------------------------------------------------------------------*/
-  static function bs_dropdown_item( $atts, $content = null ) {
+  static function dropdown_item( $atts, $content = null ) {
 
     $atts = shortcode_atts( array(
         "link"        => false,
@@ -590,25 +600,24 @@ function bs_divider( $atts, $content = null ) {
     $a_class  = '';
     $a_class .= ( $atts['xclass'] ) ? ' ' . $atts['xclass'] : '';
   
-    $data_props = self::parse_data_attributes( $atts['data'] );
   
     return sprintf(
       '<li role="presentation" class="%s"><a role="menuitem" href="%s" class="%s"%s>%s</a></li>',
       esc_attr( $li_class ),
       esc_url( $atts['link'] ),
       esc_attr( $a_class ),
-      ( $data_props ) ? ' ' . $data_props : '',
+      self::parse_data_attributes( $atts['data'] ),
       do_shortcode( $content )
     );
   }
   
 /*--------------------------------------------------------------------------------------
   *
-  * bs_dropdown
+  * dropdown
   * used in button
   *
   *-------------------------------------------------------------------------------------*/
-  static function bs_dropdown( $atts, $content = null ) {
+  static function dropdown( $atts, $content = null ) {
 
     $atts = shortcode_atts( array(
         "xclass" => false,
@@ -618,23 +627,22 @@ function bs_divider( $atts, $content = null ) {
     $class  = 'dropdown-menu';
     $class .= ( $atts['xclass'] )   ? ' ' . $atts['xclass'] : '';
   
-    $data_props = self::parse_data_attributes( $atts['data'] );
   
     return sprintf(
       '<ul role="menu" class="%s"%s>%s</ul>',
       esc_attr( trim($class) ),
-      ( $data_props ) ? ' ' . $data_props : '',
+      self::parse_data_attributes( $atts['data'] ),
       do_shortcode( $content )
     );
   }
   
 /*--------------------------------------------------------------------------------------
   *
-  * bs_jumbotron
+  * jumbotron
   * 
   *
   *-------------------------------------------------------------------------------------*/
-  static function bs_jumbotron( $atts, $content = null ) {
+  static function jumbotron( $atts, $content = null ) {
 
     $atts = shortcode_atts( array(
           "title"  => false,
@@ -645,12 +653,11 @@ function bs_divider( $atts, $content = null ) {
     $class  = 'jumbotron';
     $class .= ( $atts['xclass'] )   ? ' ' . $atts['xclass'] : '';
   
-    $data_props = self::parse_data_attributes( $atts['data'] );
   
     return sprintf(
       '<div class="%s"%s>%s%s</div>',
       esc_attr( trim($class) ),
-      ( $data_props ) ? ' ' . $data_props : '',
+      self::parse_data_attributes( $atts['data'] ),
       ( $atts['title'] ) ? '<h1>' . esc_html( $atts['title'] ) . '</h1>' : '',
       do_shortcode( $content )
     );
@@ -658,11 +665,11 @@ function bs_divider( $atts, $content = null ) {
   
 /*--------------------------------------------------------------------------------------
   *
-  * bs_list_group_item_heading
+  * list_group_item_heading
   *
   *
   *-------------------------------------------------------------------------------------*/
-  static function bs_list_group_item_heading( $atts, $content = null ) {
+  static function list_group_item_heading( $atts, $content = null ) {
 
     $atts = shortcode_atts( array(
         "xclass" => false,
@@ -672,23 +679,22 @@ function bs_divider( $atts, $content = null ) {
     $class  = 'list-group-item-heading';
     $class .= ( $atts['xclass'] )   ? ' ' . $atts['xclass'] : '';
   
-    $data_props = self::parse_data_attributes( $atts['data'] );
   
     return sprintf(
       '<h4 class="%s"%s>%s</h4>',
       esc_attr( trim($class) ),
-      ( $data_props ) ? ' ' . $data_props : '',
+      self::parse_data_attributes( $atts['data'] ),
       do_shortcode( $content )
     );
   }
   
 /*--------------------------------------------------------------------------------------
   *
-  * bs_list_group_item_text
+  * list_group_item_text
   *
   *
   *-------------------------------------------------------------------------------------*/
-  static function bs_list_group_item_text( $atts, $content = null ) {
+  static function list_group_item_text( $atts, $content = null ) {
 
     $atts = shortcode_atts( array(
         "xclass" => false,
@@ -698,24 +704,23 @@ function bs_divider( $atts, $content = null ) {
     $class  = 'list-group-item-text';
     $class .= ( $atts['xclass'] )   ? ' ' . $atts['xclass'] : '';
   
-    $data_props = self::parse_data_attributes( $atts['data'] );
   
     return sprintf(
       '<p class="%s"%s>%s</p>',
       esc_attr( trim($class) ),
-      ( $data_props ) ? ' ' . $data_props : '',
+      self::parse_data_attributes( $atts['data'] ),
       do_shortcode( $content )
     );
   }
   
 /*--------------------------------------------------------------------------------------
   *
-  * bs_list_group_item
+  * list_group_item
   *
   * @author M. W. Delaney
   *
   *-------------------------------------------------------------------------------------*/
-  static function bs_list_group_item( $atts, $content = null ) {
+  static function list_group_item( $atts, $content = null ) {
 
     $atts = shortcode_atts( array(
         "link"    => false,
@@ -731,7 +736,6 @@ function bs_divider( $atts, $content = null ) {
     $class .= ( $atts['active']   == 'true' )   ? ' active' : '';
     $class .= ( $atts['xclass'] )   ? ' ' . $atts['xclass'] : '';
   
-    $data_props = self::parse_data_attributes( $atts['data'] );
   
     return sprintf(
       '<%1$s %2$s %3$s class="%4$s"%5$s>%6$s</%1$s>',
@@ -739,19 +743,19 @@ function bs_divider( $atts, $content = null ) {
       ( $atts['link'] )     ? 'href="' . esc_url( $atts['link'] ) . '"' : '',
       ( $atts['target'] )   ? sprintf( ' target="%s"', esc_attr( $atts['target'] ) ) : '',
       esc_attr( trim($class) ),
-      ( $data_props ) ? ' ' . $data_props : '',
+      self::parse_data_attributes( $atts['data'] ),
       do_shortcode( $content )
     );
   }
   
 /*--------------------------------------------------------------------------------------
   *
-  * bs_list_group
+  * list_group
   *
   * @author M. W. Delaney
   *
   *-------------------------------------------------------------------------------------*/
-  static function bs_list_group( $atts, $content = null ) {
+  static function list_group( $atts, $content = null ) {
 
     $atts = shortcode_atts( array(
         "linked" => false,
@@ -762,25 +766,24 @@ function bs_divider( $atts, $content = null ) {
     $class  = 'list-group';
     $class .= ( $atts['xclass'] )   ? ' ' . $atts['xclass'] : '';
   
-    $data_props = self::parse_data_attributes( $atts['data'] );
   
     return sprintf(
       '<%1$s class="%2$s"%3$s>%4$s</%1$s>',
       ( $atts['linked'] == 'true' ) ? 'div' : 'ul',
       esc_attr( trim($class) ),
-      ( $data_props ) ? ' ' . $data_props : '',
+      self::parse_data_attributes( $atts['data'] ),
       do_shortcode( $content )
     );
   }
   
 /*--------------------------------------------------------------------------------------
   *
-  * bs_modal_footer
+  * modal_footer
   *
   * @since 1.0
   *
   *-------------------------------------------------------------------------------------*/
-  static function bs_modal_footer( $atts, $content = null ) {
+  static function modal_footer( $atts, $content = null ) {
 
     $atts = shortcode_atts( array(
         "xclass" => false,
@@ -790,24 +793,23 @@ function bs_divider( $atts, $content = null ) {
     $class  = 'modal-footer';
     $class .= ( $atts['xclass'] ) ? ' ' . $atts['xclass'] : '';
   
-    $data_props = self::parse_data_attributes( $atts['data'] );
   
     return sprintf(
       '</div><div class="%s"%s>%s',
       esc_attr( trim($class) ),
-      ( $data_props ) ? ' ' . $data_props : '',
+      self::parse_data_attributes( $atts['data'] ),
       do_shortcode( $content )
     );
   }
   
 /*--------------------------------------------------------------------------------------
   *
-  * bs_modal
+  * modal
   *
   * @since 1.0
   *
   *-------------------------------------------------------------------------------------*/
-  static function bs_modal( $atts, $content = null ) {
+  static function modal( $atts, $content = null ) {
 
     if( isset($GLOBALS['modal_count']) )
       $GLOBALS['modal_count']++;
@@ -832,7 +834,6 @@ function bs_divider( $atts, $content = null ) {
   
     $id = 'custom-modal-' . $GLOBALS['modal_count'];
   
-    $data_props = self::parse_data_attributes( $atts['data'] );
   
     $modal_output = sprintf(
         '<div class="%1$s" id="%2$s" tabindex="-1" role="dialog" aria-hidden="true">
@@ -864,18 +865,18 @@ function bs_divider( $atts, $content = null ) {
       '<a data-bs-toggle="modal" href="#%1$s" class="%2$s"%3$s>%4$s</a>',
       esc_attr( $id ),
       esc_attr( $a_class ),
-      ( $data_props ) ? ' ' . $data_props : '',
+      self::parse_data_attributes( $atts['data'] ),
       esc_html( $atts['text'] )
     );
   }
   
 /*--------------------------------------------------------------------------------------
   *
-  * bs_row_container
+  * row_container
   * for rows inside a column, fix a bug where the row would close too early
   * not sure about this one
   *-------------------------------------------------------------------------------------*/
-  static function bs_row_container( $atts, $content = null ) {
+  static function row_container( $atts, $content = null ) {
 
     $atts = shortcode_atts( array(
         "xclass" => false,
@@ -885,23 +886,22 @@ function bs_divider( $atts, $content = null ) {
     $class  = 'row';
     $class .= ( $atts['xclass'] )   ? ' ' . $atts['xclass'] : '';
   
-    $data_props = self::parse_data_attributes( $atts['data'] );
   
     return sprintf(
       '<div class="%s"%s>%s</div>',
       esc_attr( trim($class) ),
-      ( $data_props ) ? ' ' . $data_props : '',
+      self::parse_data_attributes( $atts['data'] ),
       do_shortcode( $content )
     );
   }
   
   /*--------------------------------------------------------------------------------------
   *
-  * bs_row
+  * row
   *
   *
   *-------------------------------------------------------------------------------------*/
-  static function bs_row( $atts, $content = null ) {
+  static function row( $atts, $content = null ) {
 
     $atts = shortcode_atts( array(
         "xclass" => false,
@@ -911,24 +911,23 @@ function bs_divider( $atts, $content = null ) {
     $class  = 'row';
     $class .= ( $atts['xclass'] )   ? ' ' . $atts['xclass'] : '';
   
-    $data_props = self::parse_data_attributes( $atts['data'] );
   
     return sprintf(
       '<div class="%s"%s>%s</div>',
       esc_attr( trim($class) ),
-      ( $data_props ) ? ' ' . $data_props : '',
+      self::parse_data_attributes( $atts['data'] ),
       do_shortcode( $content )
     );
   }
   
 /*--------------------------------------------------------------------------------------
   *
-  * bs_tab
+  * tab
   *
   * @since 1.0
   *
   *-------------------------------------------------------------------------------------*/
-  static function bs_tab( $atts, $content = null ) {
+  static function tab( $atts, $content = null ) {
 
     $atts = shortcode_atts( array(
         'title'   => false,
@@ -956,13 +955,12 @@ function bs_divider( $atts, $content = null ) {
     } else {
       $id = $atts['link'];
     }
-    $data_props = self::parse_data_attributes( $atts['data'] );
   
     return sprintf(
       '<div id="%s" class="%s"%s>%s</div>',
       sanitize_html_class($id),
       esc_attr( trim($class) ),
-      ( $data_props ) ? ' ' . $data_props : '',
+      self::parse_data_attributes( $atts['data'] ),
       do_shortcode( $content )
     );
   
@@ -970,14 +968,14 @@ function bs_divider( $atts, $content = null ) {
   
 /*--------------------------------------------------------------------------------------
   *
-  * bs_tabs
+  * tabs
   *
   * @author Eric Derewonko
   * @since 1.0
   * Modified by TwItCh twitch@designweapon.com
   * Now acts a whole nav/tab/pill shortcode solution!
   *-------------------------------------------------------------------------------------*/
-  static function bs_tabs( $atts, $content = null ) {
+  static function tabs( $atts, $content = null ) {
 
     if( isset( $GLOBALS['tabs_count'] ) )
       $GLOBALS['tabs_count']++;
@@ -1009,7 +1007,6 @@ function bs_divider( $atts, $content = null ) {
     }
   
   
-    $data_props = self::parse_data_attributes( $atts['data'] );
   
     $atts_map = bs_attribute_map( $content );
   
@@ -1048,7 +1045,7 @@ function bs_divider( $atts, $content = null ) {
       '<ul class="%s" id="%s"%s>%s</ul><div class="%s">%s</div>',
       esc_attr( $ul_class ),
       sanitize_html_class( $id ),
-      ( $data_props ) ? ' ' . $data_props : '',
+      self::parse_data_attributes( $atts['data'] ),
       ( $tabs )  ? implode( $tabs ) : '',
       sanitize_html_class( $div_class ),
       do_shortcode( $content )
@@ -1064,11 +1061,11 @@ function bs_divider( $atts, $content = null ) {
   
   /*--------------------------------------------------------------------------------------
   *
-  * bs_button_toolbar
+  * button_toolbar
   * deprecated
   *
   *-------------------------------------------------------------------------------------*/
-  static function bs_button_toolbar( $atts, $content = null ) {
+  static function button_toolbar( $atts, $content = null ) {
 
     $atts = shortcode_atts( array(
         "xclass" => false,
@@ -1078,23 +1075,22 @@ function bs_divider( $atts, $content = null ) {
     $class  = 'btn-toolbar';
     $class .= ( $atts['xclass'] )   ? ' ' . $atts['xclass'] : '';
 
-    $data_props = self::parse_data_attributes( $atts['data'] );
 
     return sprintf(
       '<div class="%s"%s>%s</div>',
       esc_attr( trim($class) ),
-      ( $data_props ) ? ' ' . $data_props : '',
+      self::parse_data_attributes( $atts['data'] ),
       do_shortcode( $content )
     );
   }
 
   /*--------------------------------------------------------------------------------------
   *
-  * bs_caret present in nav, dropdown
+  * caret present in nav, dropdown
   * deprecated, will be integrated in button/dropdown
   * will stay here andjust  return null
   *-------------------------------------------------------------------------------------*/
-  static function bs_caret( $atts, $content = null ) {
+  static function caret( $atts, $content = null ) {
 
     $atts = shortcode_atts( array(
         "xclass" => false,
@@ -1104,24 +1100,23 @@ function bs_divider( $atts, $content = null ) {
     $class  = 'caret';
     $class .= ( $atts['xclass'] )   ? ' ' . $atts['xclass'] : '';
 
-    $data_props = self::parse_data_attributes( $atts['data'] );
 
     return sprintf(
       '<span class="%s"%s>%s</span>',
       esc_attr( trim($class) ),
-      ( $data_props ) ? ' ' . $data_props : '',
+      self::parse_data_attributes( $atts['data'] ),
       do_shortcode( $content )
     );
   }
 
   /*--------------------------------------------------------------------------------------
   *
-  * bs_dropdown_header
+  * dropdown_header
   *
   * @author M. W. Delaney
   *
   *-------------------------------------------------------------------------------------*/
-  static function bs_dropdown_header( $atts, $content = null ) {
+  static function dropdown_header( $atts, $content = null ) {
 
     $atts = shortcode_atts( array(
         "xclass" => false,
@@ -1131,23 +1126,22 @@ function bs_divider( $atts, $content = null ) {
     $class  = 'dropdown-header';
     $class .= ( $atts['xclass'] ) ? ' ' . $atts['xclass'] : '';
 
-    $data_props = self::parse_data_attributes( $atts['data'] );
 
     return sprintf(
       '<li class="%s"%s>%s</li>',
       esc_attr( trim($class) ),
-      ( $data_props ) ? ' ' . $data_props : '',
+      self::parse_data_attributes( $atts['data'] ),
       do_shortcode( $content )
     );
   }
 
   /*--------------------------------------------------------------------------------------
   *
-  * bs_nav
+  * nav
   * deprecated
   *
   *-------------------------------------------------------------------------------------*/
-  static function bs_nav( $atts, $content = null ) {
+  static function nav( $atts, $content = null ) {
 
     $atts = shortcode_atts( array(
           "type"      => false,
@@ -1163,23 +1157,22 @@ function bs_divider( $atts, $content = null ) {
     $class .= ( $atts['justified'] == 'true' )    ? ' nav-justified' : '';
     $class .= ( $atts['xclass'] )       ? ' ' . $atts['xclass'] : '';
 
-    $data_props = self::parse_data_attributes( $atts['data'] );
 
     return sprintf(
       '<ul class="%s"%s>%s</ul>',
       esc_attr( trim($class) ),
-      ( $data_props ) ? ' ' . $data_props : '',
+      self::parse_data_attributes( $atts['data'] ),
       do_shortcode( $content )
     );
   }
 
   /*--------------------------------------------------------------------------------------
   *
-  * bs_nav_item
+  * nav_item
   * deprecated
   *
   *-------------------------------------------------------------------------------------*/
-  static function bs_nav_item( $atts, $content = null ) {
+  static function nav_item( $atts, $content = null ) {
 
     $atts = shortcode_atts( array(
         "link"     => false,
@@ -1199,7 +1192,6 @@ function bs_divider( $atts, $content = null ) {
     $a_classes .= ( $atts['dropdown']   == 'true' ) ? ' dropdown-toggle' : '';
     $a_classes .= ( $atts['xclass'] )   ? ' ' . $atts['xclass'] : '';
 
-    $data_props = self::parse_data_attributes( $atts['data'] );
 
     # Wrong idea I guess ....
     #$pattern = ( $dropdown ) ? '<li%1$s><a href="%2$s"%3$s%4$s%5$s></a>%6$s</li>' : '<li%1$s><a href="%2$s"%3$s%4$s%5$s>%6$s</a></li>';
@@ -1213,7 +1205,7 @@ function bs_divider( $atts, $content = null ) {
       esc_url( $atts['link'] ),
       ( ! empty( $a_classes ) )  ? sprintf( ' class="%s"', esc_attr( $a_classes ) )  : '',
       ( $atts['dropdown'] )   ? ' data-bs-toggle="dropdown"' : '',
-      ( $data_props ) ? ' ' . $data_props : '',
+      self::parse_data_attributes( $atts['data'] ),
       do_shortcode( $content )
     );
 
@@ -1221,11 +1213,11 @@ function bs_divider( $atts, $content = null ) {
 
   /*--------------------------------------------------------------------------------------
   *
-  * bs_progress
+  * progress
   * deprecated
   *
   *-------------------------------------------------------------------------------------*/
-  static function bs_progress( $atts, $content = null ) {
+  static function progress( $atts, $content = null ) {
 
     $atts = shortcode_atts( array(
         "striped"   => false,
@@ -1239,7 +1231,6 @@ function bs_divider( $atts, $content = null ) {
     $class .= ( $atts['animated']  == 'true' ) ? ' active' : '';
     $class .= ( $atts['xclass'] )   ? ' ' . $atts['xclass'] : '';
 
-    $data_props = self::parse_data_attributes( $atts['data'] );
 
     return sprintf(
       '<div class="%s"%s>%s</div>',
@@ -1251,11 +1242,11 @@ function bs_divider( $atts, $content = null ) {
 
   /*--------------------------------------------------------------------------------------
   *
-  * bs_progress_bar
+  * progress_bar
   * deprecated
   *
   *-------------------------------------------------------------------------------------*/
-  static function bs_progress_bar( $atts, $content = null ) {
+  static function progress_bar( $atts, $content = null ) {
 
     $atts = shortcode_atts( array(
           "type"      => false,
@@ -1269,7 +1260,6 @@ function bs_divider( $atts, $content = null ) {
     $class .= ( $atts['type'] )   ? ' progress-bar-' . $atts['type'] : '';
     $class .= ( $atts['xclass'] ) ? ' ' . $atts['xclass'] : '';
 
-    $data_props = self::parse_data_attributes( $atts['data'] );
 
     return sprintf(
       '<div class="%s" role="progressbar" %s%s>%s</div>',
@@ -1282,11 +1272,11 @@ function bs_divider( $atts, $content = null ) {
 
   /*--------------------------------------------------------------------------------------
   *
-  * bs_code
+  * code
   * deprecated
   *
   *-------------------------------------------------------------------------------------*/
-  static function bs_code( $atts, $content = null ) {
+  static function code( $atts, $content = null ) {
 
     $atts = shortcode_atts( array(
           "inline"      => false,
@@ -1299,24 +1289,23 @@ function bs_divider( $atts, $content = null ) {
     $class .= ( $atts['scrollable']   == 'true' )  ? ' pre-scrollable' : '';
     $class .= ( $atts['xclass'] )   ? ' ' . $atts['xclass'] : '';
 
-    $data_props = self::parse_data_attributes( $atts['data'] );
 
     return sprintf(
       '<%1$s class="%2$s"%3$s>%4$s</%1$s>',
       ( $atts['inline'] ) ? 'code' : 'pre',
       esc_attr( trim($class) ),
-      ( $data_props ) ? ' ' . $data_props : '',
+      self::parse_data_attributes( $atts['data'] ),
       do_shortcode( $content )
     );
   }
 
   /*--------------------------------------------------------------------------------------
   *
-  * bs_breadcrumb
+  * breadcrumb
   * deprecated
   *
   *-------------------------------------------------------------------------------------*/
-  static function bs_breadcrumb( $atts, $content = null ) {
+  static function breadcrumb( $atts, $content = null ) {
 
     $atts = shortcode_atts( array(
         "xclass" => false,
@@ -1326,24 +1315,23 @@ function bs_divider( $atts, $content = null ) {
     $class  = 'breadcrumb';
     $class .= ( $atts['xclass'] )   ? ' ' . $atts['xclass'] : '';
 
-    $data_props = self::parse_data_attributes( $atts['data'] );
 
     return sprintf(
       '<ol class="%s"%s>%s</ol>',
       esc_attr( trim($class) ),
-      ( $data_props ) ? ' ' . $data_props : '',
+      self::parse_data_attributes( $atts['data'] ),
       do_shortcode( $content )
     );
   }
 
   /*--------------------------------------------------------------------------------------
   *
-  * bs_breadcrumb_item
+  * breadcrumb_item
   * deprecated
   * @author M. W. Delaney
   *
   *-------------------------------------------------------------------------------------*/
-  static function bs_breadcrumb_item( $atts, $content = null ) {
+  static function breadcrumb_item( $atts, $content = null ) {
 
     $atts = shortcode_atts( array(
         "link" => false,
@@ -1354,25 +1342,24 @@ function bs_divider( $atts, $content = null ) {
     $class  = '';
     $class .= ( $atts['xclass'] )   ? ' ' . $atts['xclass'] : '';
 
-    $data_props = self::parse_data_attributes( $atts['data'] );
 
     return sprintf(
       '<li><a href="%s" class="%s"%s>%s</a></li>',
       esc_url( $atts['link'] ),
       esc_attr( trim($class) ),
-      ( $data_props ) ? ' ' . $data_props : '',
+      self::parse_data_attributes( $atts['data'] ),
       do_shortcode( $content )
     );
   }
 
   /*--------------------------------------------------------------------------------------
   *
-  * bs_label
+  * label
   * deprecated
   * @since 1.0
   *
   *-------------------------------------------------------------------------------------*/
-  static function bs_label( $atts, $content = null ) {
+  static function label( $atts, $content = null ) {
 
     $atts = shortcode_atts( array(
         "type"      => false,
@@ -1384,24 +1371,23 @@ function bs_divider( $atts, $content = null ) {
     $class .= ( $atts['type'] )     ? ' label-' . $atts['type'] : ' label-primary';
     $class .= ( $atts['xclass'] )   ? ' ' . $atts['xclass'] : '';
 
-    $data_props = self::parse_data_attributes( $atts['data'] );
 
     return sprintf(
       '<span class="%s"%s>%s</span>',
       esc_attr( trim($class) ),
-      ( $data_props ) ? ' ' . $data_props : '',
+      self::parse_data_attributes( $atts['data'] ),
       do_shortcode( $content )
     );
   }
 
   /*--------------------------------------------------------------------------------------
   *
-  * bs_badge
+  * badge
   * deprecated
   * @since 1.0
   *
   *-------------------------------------------------------------------------------------*/
-  static function bs_badge( $atts, $content = null ) {
+  static function badge( $atts, $content = null ) {
 
     $atts = shortcode_atts( array(
         "right"   => false,
@@ -1413,24 +1399,23 @@ function bs_divider( $atts, $content = null ) {
     $class .= ( $atts['right']   == 'true' )    ? ' pull-right' : '';
     $class .= ( $atts['xclass'] )   ? ' ' . $atts['xclass'] : '';
 
-    $data_props = self::parse_data_attributes( $atts['data'] );
 
     return sprintf(
       '<span class="%s"%s>%s</span>',
       esc_attr( trim($class) ),
-      ( $data_props ) ? ' ' . $data_props : '',
+      self::parse_data_attributes( $atts['data'] ),
       do_shortcode( $content )
     );
   }
 
   /*--------------------------------------------------------------------------------------
   *
-  * bs_icon
+  * icon
   * deprecated
   * @since 1.0
   *
   *-------------------------------------------------------------------------------------*/
-  static function bs_icon( $atts, $content = null ) {
+  static function icon( $atts, $content = null ) {
 
     $atts = shortcode_atts( array(
         "type"   => false,
@@ -1442,98 +1427,18 @@ function bs_divider( $atts, $content = null ) {
     $class .= ( $atts['type'] )     ? ' glyphicon-' . $atts['type'] : '';
     $class .= ( $atts['xclass'] )   ? ' ' . $atts['xclass'] : '';
 
-    $data_props = self::parse_data_attributes( $atts['data'] );
 
     return sprintf(
       '<span class="%s"%s>%s</span>',
       esc_attr( trim($class) ),
-      ( $data_props ) ? ' ' . $data_props : '',
+      self::parse_data_attributes( $atts['data'] ),
       do_shortcode( $content )
     );
   }
 
   /*--------------------------------------------------------------------------------------
   *
-  * simple_table
-  * deprecated
-  * @since 1.0
-  *
-  *-------------------------------------------------------------------------------------
-  static function bs_table( $atts ) {
-      extract( shortcode_atts( array(
-          'cols' => 'none',
-          'data' => 'none',
-          'bordered' => false,
-          'striped' => false,
-          'hover' => false,
-          'condensed' => false,
-      ), $atts ) );
-      $cols = explode(',',$cols);
-      $data = explode(',',$data);
-      $total = count($cols);
-      $return  = '<table class="table ';
-      $return .= ($bordered) ? 'table-bordered ' : '';
-      $return .= ($striped) ? 'table-striped ' : '';
-      $return .= ($hover) ? 'table-hover ' : '';
-      $return .= ($condensed) ? 'table-condensed ' : '';
-      $return .='"><tr>';
-      foreach($cols as $col):
-          $return .= '<th>'.$col.'</th>';
-      endforeach;
-      $output .= '</tr><tr>';
-      $counter = 1;
-      foreach($data as $datum):
-          $return .= '<td>'.$datum.'</td>';
-          if($counter%$total==0):
-              $return .= '</tr>';
-          endif;
-          $counter++;
-      endforeach;
-          $return .= '</table>';
-      return $return;
-  }
-  */
-
-  /*--------------------------------------------------------------------------------------
-  *
-  * bs_table_wrap
-  * deprecated
-  * @since 1.0
-  *
-  *-------------------------------------------------------------------------------------*/
-  static function bs_table_wrap( $atts, $content = null ) {
-
-    $atts = shortcode_atts( array(
-        'bordered'   => false,
-        'striped'    => false,
-        'hover'      => false,
-        'condensed'  => false,
-        'responsive' => false,
-        'xclass'     => false,
-        'data'       => false
-    ), $atts );
-
-    $class  = 'table';
-    $class .= ( $atts['bordered']  == 'true' )    ? ' table-bordered' : '';
-    $class .= ( $atts['striped']   == 'true' )    ? ' table-striped' : '';
-    $class .= ( $atts['hover']     == 'true' )    ? ' table-hover' : '';
-    $class .= ( $atts['condensed'] == 'true' )    ? ' table-condensed' : '';
-    $class .= ( $atts['xclass'] )                 ? ' ' . $atts['xclass'] : '';
-
-    $return = '';
-
-    $tag = array('table');
-    $content = do_shortcode($content);
-
-    $return .= self::scrape_dom_element($tag, $content, $class, '', $atts['data']);
-    $return = ( $atts['responsive'] ) ? '<div class="table-responsive">' . $return . '</div>' : $return;
-    return $return;
-  }
-
-
-  /*--------------------------------------------------------------------------------------
-  *
-  * bs_well
+  * well
   * deprecated
   * @since 1.0
   *
@@ -1541,7 +1446,7 @@ function bs_divider( $atts, $content = null ) {
   *   size: sm = small, lg = large
   *
   *-------------------------------------------------------------------------------------*/
-  static function bs_well( $atts, $content = null ) {
+  static function well( $atts, $content = null ) {
 
     $atts = shortcode_atts( array(
         "size"   => false,
@@ -1553,152 +1458,11 @@ function bs_divider( $atts, $content = null ) {
     $class .= ( $atts['size'] )     ? ' well-' . $atts['size'] : '';
     $class .= ( $atts['xclass'] )   ? ' ' . $atts['xclass'] : '';
 
-    $data_props = self::parse_data_attributes( $atts['data'] );
 
     return sprintf(
       '<div class="%s"%s>%s</div>',
       esc_attr( trim($class) ),
-      ( $data_props ) ? ' ' . $data_props : '',
-      do_shortcode( $content )
-    );
-  }
-
-  /*--------------------------------------------------------------------------------------
-  *
-  * bs_panel
-  * deprecated
-  * @author Eric Derewonko
-  * @since 3.4.0
-  *
-  *-------------------------------------------------------------------------------------*/
-  static function bs_panel( $atts, $content = null ) {
-    $atts = shortcode_atts( array(
-        "type"    => false,
-        "xclass"  => false,
-        "data"    => false
-    ), $atts );
-
-    $class  = 'panel';
-    $class .= ( $atts['type'] )     ? ' panel-' . $atts['type'] : ' panel-primary';
-    $class .= ( $atts['xclass'] )   ? ' ' . $atts['xclass'] : '';
-
-    $data_props = self::parse_data_attributes( $atts['data'] );
-
-    return sprintf(
-      '<div class="%s"%s>%s</div>',
-      esc_attr( trim($class) ),
-      ( $data_props ) ? ' ' . $data_props : '',
-      do_shortcode( $content )
-    );
-  }
-
-  /*--------------------------------------------------------------------------------------
-  *
-  * bs_panel_heading
-  * deprecated
-  * @author Eric Derewonko
-  * @since 3.4.0
-  *
-  *-------------------------------------------------------------------------------------*/
-  static function bs_panel_heading( $atts, $content = null ) {
-    $atts = shortcode_atts( array(
-        "xclass" => false,
-        "data"   => false
-    ), $atts );
-
-    $class  = 'panel-heading';
-    $class .= ( $atts['xclass'] )   ? ' ' . $atts['xclass'] : '';
-
-    $data_props = self::parse_data_attributes( $atts['data'] );
-
-    return sprintf(
-      '<div class="%s"%s>%s</div>',
-      esc_attr( trim($class) ),
-      ( $data_props ) ? ' ' . $data_props : '',
-      do_shortcode( $content )
-    );
-  }
-
-  /*--------------------------------------------------------------------------------------
-  *
-  * bs_panel_body
-  * deprecated
-  * @author Eric Derewonko
-  * @since 3.4.0
-  *
-  *-------------------------------------------------------------------------------------*/
-  static function bs_panel_body( $atts, $content = null ) {
-
-    $atts = shortcode_atts( array(
-        "xclass" => false,
-        "data"   => false
-    ), $atts );
-
-    $class  = 'panel-body';
-    $class .= ( $atts['xclass'] )   ? ' ' . $atts['xclass'] : '';
-
-    $data_props = self::parse_data_attributes( $atts['data'] );
-
-    return sprintf(
-      '<div class="%s"%s>%s</div>',
-      esc_attr( trim($class) ),
-      ( $data_props ) ? ' ' . $data_props : '',
-      do_shortcode( $content )
-    );
-  }
-
-  /*--------------------------------------------------------------------------------------
-  *
-  * bs_panel_footer
-  * deprecated
-  * @author Eric Derewonko
-  * @since 3.4.0
-  *
-  *-------------------------------------------------------------------------------------*/
-  static function bs_panel_footer( $atts, $content = null ) {
-
-    $atts = shortcode_atts( array(
-        "xclass" => false,
-        "data"   => false
-    ), $atts );
-
-    $class  = 'panel-footer';
-    $class .= ( $atts['xclass'] )   ? ' ' . $atts['xclass'] : '';
-
-    $data_props = self::parse_data_attributes( $atts['data'] );
-
-    return sprintf(
-      '<div class="%s"%s>%s</div>',
-      esc_attr( trim($class) ),
-      ( $data_props ) ? ' ' . $data_props : '',
-      do_shortcode( $content )
-    );
-  }
-
-  /*--------------------------------------------------------------------------------------
-  *
-  * bs_card_footer
-  *
-  * @author Eric Derewonko
-  * @since 3.4.0
-  *
-  *-------------------------------------------------------------------------------------*/
-  static function bs_card_footer( $atts, $content = null ) {
-
-    $atts = shortcode_atts( array(
-        "xclass" => false,
-        "data"   => false
-    ), $atts );
-
-    $class  = 'card-footer';
-    $class .= ( $atts['xclass'] )   ? ' ' . $atts['xclass'] : '';
-
-    $data_props = self::parse_data_attributes( $atts['data'] );
-
-    return sprintf(
-      '<div class="%s"%s>%s</div>',
-      esc_attr( trim($class) ),
-      ( $data_props ) ? ' ' . $data_props : '',
+      self::parse_data_attributes( $atts['data'] ),
       do_shortcode( $content )
     );
   }
@@ -1708,13 +1472,13 @@ function bs_divider( $atts, $content = null ) {
 
   /*--------------------------------------------------------------------------------------
   *
-  * bs_collapsibles
+  * collapsibles
   *
   * deprecated
   * @since 1.0
   *
   *-------------------------------------------------------------------------------------*/
-  static function bs_collapsibles( $atts, $content = null ) {
+  static function collapsibles( $atts, $content = null ) {
 
     if( isset($GLOBALS['collapsibles_count']) )
       $GLOBALS['collapsibles_count']++;
@@ -1731,13 +1495,12 @@ function bs_divider( $atts, $content = null ) {
 
     $id = 'custom-collapse-'. $GLOBALS['collapsibles_count'];
 
-    $data_props = self::parse_data_attributes( $atts['data'] );
 
     return sprintf(
       '<div class="%s" id="%s"%s>%s</div>',
         esc_attr( trim($class) ),
         esc_attr($id),
-      ( $data_props ) ? ' ' . $data_props : '',
+      self::parse_data_attributes( $atts['data'] ),
       do_shortcode( $content )
     );
 
@@ -1746,13 +1509,13 @@ function bs_divider( $atts, $content = null ) {
 
   /*--------------------------------------------------------------------------------------
   *
-  * bs_collapse
+  * collapse
   *
   * deprecated
   * @since 1.0
   *
   *-------------------------------------------------------------------------------------*/
-  static function bs_collapse( $atts, $content = null ) {
+  static function collapse( $atts, $content = null ) {
 
     if( isset($GLOBALS['single_collapse_count']) )
       $GLOBALS['single_collapse_count']++;
@@ -1781,7 +1544,6 @@ function bs_divider( $atts, $content = null ) {
     $current_collapse = $parent . '-' . $GLOBALS['single_collapse_count'];
 
     $data_props = self::parse_data_attributes( $atts['data'] );
-
     return sprintf(
       '<div class="%1$s"%2$s>
         <div class="panel-heading">
@@ -1807,12 +1569,12 @@ function bs_divider( $atts, $content = null ) {
 
   /*--------------------------------------------------------------------------------------
   *
-  * bs_carousel
+  * carousel
   * deprecated
   * @since 1.0
   *
   *-------------------------------------------------------------------------------------*/
-  static function bs_carousel( $atts, $content = null ) {
+  static function carousel( $atts, $content = null ) {
 
     if( isset($GLOBALS['carousel_count']) )
       $GLOBALS['carousel_count']++;
@@ -1836,7 +1598,6 @@ function bs_divider( $atts, $content = null ) {
 
     $id = 'custom-carousel-'. $GLOBALS['carousel_count'];
 
-    $data_props = self::parse_data_attributes( $atts['data'] );
 
     $atts_map = bs_attribute_map( $content );
 
@@ -1867,7 +1628,7 @@ function bs_divider( $atts, $content = null ) {
       ( $atts['interval'] )   ? sprintf( ' data-bs-interval="%d"', $atts['interval'] ) : '',
       ( $atts['pause'] )      ? sprintf( ' data-bs-pause="%s"', esc_attr( $atts['pause'] ) ) : '',
       ( $atts['wrap'] == 'true' )       ? sprintf( ' data-bs-wrap="%s"', esc_attr( $atts['wrap'] ) ) : '',
-      ( $data_props ) ? ' ' . $data_props : '',
+      self::parse_data_attributes( $atts['data'] ),
       ( $indicators ) ? '<ol class="carousel-indicators">' . implode( $indicators ) . '</ol>' : '',
       esc_attr( $inner_class ),
       do_shortcode( $content ),
@@ -1879,12 +1640,12 @@ function bs_divider( $atts, $content = null ) {
 
   /*--------------------------------------------------------------------------------------
   *
-  * bs_carousel_item
+  * carousel_item
   * deprecated
   * @since 1.0
   *
   *-------------------------------------------------------------------------------------*/
-  static function bs_carousel_item( $atts, $content = null ) {
+  static function carousel_item( $atts, $content = null ) {
 
     $atts = shortcode_atts( array(
         "active"  => false,
@@ -1902,7 +1663,6 @@ function bs_divider( $atts, $content = null ) {
     $class .= ( $atts['active']   == 'true' ) ? ' active' : '';
     $class .= ( $atts['xclass'] ) ? ' ' . $atts['xclass'] : '';
 
-    $data_props = self::parse_data_attributes( $atts['data'] );
 
     //$content = preg_replace('/class=".*?"/', '', $content);
     $content = preg_replace('/alignnone/', '', $content);
@@ -1913,7 +1673,7 @@ function bs_divider( $atts, $content = null ) {
     return sprintf(
       '<div class="%s"%s>%s%s</div>',
       esc_attr( trim($class) ),
-      ( $data_props ) ? ' ' . $data_props : '',
+      self::parse_data_attributes( $atts['data'] ),
       do_shortcode( $content ),
       ( $atts['caption'] ) ? '<div class="carousel-caption">' . esc_html( $atts['caption'] ) . '</div>' : ''
     );
@@ -1921,14 +1681,14 @@ function bs_divider( $atts, $content = null ) {
 
   /*--------------------------------------------------------------------------------------
   *
-  * bs_tooltip
+  * tooltip
   * deprecated
   * @since 1.0
   *
   *-------------------------------------------------------------------------------------*/
 
 
-  static function bs_tooltip( $atts, $content = null ) {
+  static function tooltip( $atts, $content = null ) {
 
     $atts = shortcode_atts( array(
        'title'     => '',
@@ -1954,12 +1714,12 @@ function bs_divider( $atts, $content = null ) {
 
   /*--------------------------------------------------------------------------------------
   *
-  * bs_popover
+  * popover
   * deprecated
   *
   *-------------------------------------------------------------------------------------*/
 
-  static function bs_popover( $atts, $content = null ) {
+  static function popover( $atts, $content = null ) {
 
     $atts = shortcode_atts( array(
         'title'     => false,
@@ -1989,14 +1749,14 @@ function bs_divider( $atts, $content = null ) {
 
   /*--------------------------------------------------------------------------------------
   *
-  * bs_media
+  * media
   * deprecated
   * @author
   * @since 1.0
   *
   *-------------------------------------------------------------------------------------*/
 
-  static function bs_media( $atts, $content = null ) {
+  static function media( $atts, $content = null ) {
 
     $atts = shortcode_atts( array(
         "xclass" => false,
@@ -2006,42 +1766,17 @@ function bs_divider( $atts, $content = null ) {
     $class  = 'media';
     $class .= ( $atts['xclass'] )   ? ' ' . $atts['xclass']: '';
 
-    $data_props = self::parse_data_attributes( $atts['data'] );
 
     return sprintf(
       '<div class="%s"%s>%s</div>',
       esc_attr( trim($class) ),
-      ( $data_props ) ? ' ' . $data_props : '',
+      self::parse_data_attributes( $atts['data'] ),
       do_shortcode( $content )
     );
   }
 
-  static function bs_media_object( $atts, $content = null ) {
 
-    $atts = shortcode_atts( array(
-        "pull"   => false,
-        "media"  => "left",
-        "xclass" => false,
-        "data"   => false
-    ), $atts );
-
-    $class = "media-object img-responsive";
-    $class .= ($atts['xclass']) ? ' ' . $atts['xclass'] : '';
-
-    $media_class ='';
-    $media_class = ($atts['media']) ? 'media-' . $atts['media'] : '';
-    $media_class = ($atts['pull'])  ? 'pull-' . $atts['pull'] : $media_class;
-
-    $return = '';
-
-    $tag = array('figure', 'div', 'img', 'i', 'span');
-    $content = do_shortcode(preg_replace('/(<br>)+$/', '', $content));
-    $return .= self::scrape_dom_element($tag, $content, $class, '', $atts['data']);
-    $return = '<span class="' . $media_class . '">' . $return . '</span>';
-    return $return;
-  }
-
-  static function bs_media_body( $atts, $content = null ) {
+  static function media_body( $atts, $content = null ) {
 
     $atts = shortcode_atts( array(
         "title"  => false,
@@ -2055,12 +1790,11 @@ function bs_divider( $atts, $content = null ) {
     $h4_class  = 'media-heading';
     $h4_class .= ( $atts['xclass'] )   ? ' ' . $atts['xclass'] : '';
 
-    $data_props = self::parse_data_attributes( $atts['data'] );
 
     return sprintf(
       '<div class="%s"%s><h4 class="%s">%s</h4>%s</div>',
       esc_attr( $div_class ),
-      ( $data_props ) ? ' ' . $data_props : '',
+      self::parse_data_attributes( $atts['data'] ),
       esc_attr( $h4_class ),
       esc_html(  $atts['title']),
       do_shortcode( $content )
@@ -2069,39 +1803,11 @@ function bs_divider( $atts, $content = null ) {
 
   /*--------------------------------------------------------------------------------------
   *
-  * bs_page_header
+  * lead
   * deprecated
   *
   *-------------------------------------------------------------------------------------*/
-  static function bs_page_header( $atts, $content = null ) {
-
-    $atts = shortcode_atts( array(
-        "xclass" => false,
-        "data"   => false
-    ), $atts );
-
-    $data_props = self::parse_data_attributes( $atts['data'] );
-
-    $class = "page-header";
-    $class .= ($atts['xclass']) ? ' ' . $atts['xclass'] : '';
-
-    $return = '';
-    $title = '';
-    $tag = 'div';
-    $content = self::strip_paragraph($content);
-    $content = self::nest_dom_element('h1', 'div', $content);
-    $return .= self::get_dom_element($tag, $content, $class, '', $atts['data']);
-    return $return;
-
-  }
-
-  /*--------------------------------------------------------------------------------------
-  *
-  * bs_lead
-  * deprecated
-  *
-  *-------------------------------------------------------------------------------------*/
-  static function bs_lead( $atts, $content = null ) {
+  static function lead( $atts, $content = null ) {
 
     $atts = shortcode_atts( array(
         "xclass" => false,
@@ -2111,23 +1817,22 @@ function bs_divider( $atts, $content = null ) {
     $class  = 'lead';
     $class .= ( $atts['xclass'] )   ? ' ' . $atts['xclass'] : '';
 
-    $data_props = self::parse_data_attributes( $atts['data'] );
 
     return sprintf(
       '<p class="%s"%s>%s</p>',
       esc_attr( trim($class) ),
-      ( $data_props ) ? ' ' . $data_props : '',
+      self::parse_data_attributes( $atts['data'] ),
       do_shortcode( $content )
     );
   }
 
   /*--------------------------------------------------------------------------------------
   *
-  * bs_emphasis
+  * emphasis
   * deprecated
   *
   *-------------------------------------------------------------------------------------*/
-  static function bs_emphasis( $atts, $content = null ) {
+  static function emphasis( $atts, $content = null ) {
 
     $atts = shortcode_atts( array(
         "type"   => false,
@@ -2139,167 +1844,15 @@ function bs_divider( $atts, $content = null ) {
     $class .= ( $atts['type'] )   ? 'text-' . $atts['type'] : 'text-muted';
     $class .= ( $atts['xclass'] ) ? ' ' . $atts['xclass'] : '';
 
-    $data_props = self::parse_data_attributes( $atts['data'] );
 
     return sprintf(
       '<span class="%s"%s>%s</span>',
       esc_attr( trim($class) ),
-      ( $data_props ) ? ' ' . $data_props : '',
+      self::parse_data_attributes( $atts['data'] ),
       do_shortcode( $content )
     );
   }
 
-  /*--------------------------------------------------------------------------------------
-  *
-  * bs_img
-  * deprecated
-  *
-  *-------------------------------------------------------------------------------------*/
-  static function bs_img( $atts, $content = null ) {
-
-    $atts = shortcode_atts( array(
-        "type"       => false,
-        "responsive" => false,
-        "xclass"     => false,
-        "data"       => false
-    ), $atts );
-
-    $class  = '';
-    $class .= ( $atts['type'] )       ? 'img-' . $atts['type'] . ' ' : '';
-    $class .= ( $atts['responsive']   == 'true' ) ? ' img-responsive' : '';
-    $class .= ( $atts['xclass'] )     ? ' ' . $atts['xclass'] : '';
-
-    $return = '';
-    $tag = array('img');
-    $content = do_shortcode($content);
-    $return .= self::scrape_dom_element($tag, $content, $class, '', $atts['data']);
-    return $return;
-
-  }
-
-  /*--------------------------------------------------------------------------------------
-  *
-  * bs_embed_responsive
-  * deprecated
-  *
-  *-------------------------------------------------------------------------------------*/
-  static function bs_embed_responsive( $atts, $content = null ) {
-
-    $atts = shortcode_atts( array(
-        "ratio"      => false,
-        "xclass"     => false,
-        "data"       => false
-    ), $atts );
-
-    $class  = 'embed-responsive ';
-    $class .= ( $atts['ratio'] )       ? ' embed-responsive-' . $atts['ratio'] . ' ' : '';
-    $class .= ( $atts['xclass'] )     ? ' ' . $atts['xclass'] : '';
-
-    $embed_class = 'embed-responsive-item';
-
-    $tag = array('iframe', 'embed', 'video', 'object');
-    $content = do_shortcode($content);
-    $data_props = self::parse_data_attributes( $atts['data'] );
-
-    return sprintf(
-      '<div class="%s"%s>%s</div>',
-      esc_attr( trim($class) ),
-      ( $data_props ) ? ' ' . $data_props : '',
-      self::scrape_dom_element($tag, $content, $embed_class, '', '')
-    );
-
-  }
-
-  /*--------------------------------------------------------------------------------------
-  *
-  * bs_thumbnail
-  * deprecated
-  *
-  *-------------------------------------------------------------------------------------*/
-  static function bs_thumbnail( $atts, $content = null ) {
-
-    $atts = shortcode_atts( array(
-        "xclass"  => false,
-        "has_content" => false,
-        "data"    => false
-    ), $atts );
-
-    $class  = "thumbnail";
-    $class .= ($atts['xclass']) ? ' ' . $atts['xclass'] : '';
-
-    $return = '';
-    if($atts['has_content']) {
-      $content = '<div>' . $content . '</div>';
-      $tag = array('div');
-    } else {
-        $tag = array('a', 'img');
-    }
-    $content = do_shortcode($content);
-    $return .= self::scrape_dom_element($tag, $content, $class, '', $atts['data']);
-    return $return;
-
-  }
-
-  /*--------------------------------------------------------------------------------------
-  *
-  * bs_responsive
-  * deprecated
-  *
-  *-------------------------------------------------------------------------------------*/
-  static function bs_responsive( $atts, $content = null ) {
-
-    $atts = shortcode_atts( array(
-        "visible" => false,
-        "hidden"  => false,
-        "block"  => false,
-        "inline"  => false,
-        "inline_block"  => false,
-        "xclass"  => false,
-        "data"    => false
-    ), $atts );
-
-    $class = '';
-    if( $atts['visible'] ) {
-      $visible = explode( ' ', $atts['visible'] );
-      foreach($visible as $v):
-        $class .= "visible-$v ";
-      endforeach;
-    }
-    if( $atts['hidden'] ) {
-      $hidden = explode( ' ', $atts['hidden'] );
-      foreach( $hidden as $h ):
-        $class .= "hidden-$h ";
-      endforeach;
-    }
-    if( $atts['block'] ) {
-      $block = explode( ' ', $atts['block'] );
-      foreach( $block as $b ):
-        $class .= "visible-$b-block ";
-      endforeach;
-    }
-    if( $atts['inline'] ) {
-      $inline = explode( ' ', $atts['inline'] );
-      foreach( $inline as $i ):
-        $class .= "visible-$i-inline ";
-      endforeach;
-    }
-    if( $atts['inline_block'] ) {
-      $inline_block = explode( ' ', $atts['inline_block'] );
-      foreach( $inline_block as $ib ):
-        $class .= "visible-$ib-inline ";
-      endforeach;
-    }
-    $class .= ( $atts['xclass'] ) ? ' ' . $atts['xclass'] : '';
-
-    $data_props = self::parse_data_attributes( $atts['data'] );
-
-    return sprintf(
-      '<span class="%s"%s>%s</span>',
-      esc_attr( trim($class) ),
-      ( $data_props ) ? ' ' . $data_props : '',
-      do_shortcode( $content )
-    );
-  }
 
   /*
   * Parse data-attributes for shortcodes
@@ -2307,7 +1860,7 @@ function bs_divider( $atts, $content = null ) {
   *-------------------------------------------------------------------------------------*/
   static function parse_data_attributes( $data ) {
 
-    $data_props = '';
+    $data_props = ' ';
 
     if( $data ) {
       $data = explode( '|', $data );
@@ -2317,9 +1870,6 @@ function bs_divider( $atts, $content = null ) {
         // scavenger bs 5.3 warning: verify if that breaks anything
         $data_props .= sprintf( 'data-bs-%s="%s" ', esc_html( $d[0] ), esc_attr( trim( $d[1] ) ) );
       }
-    }
-    else {
-      $data_props = false;
     }
     return $data_props;
   }
@@ -2363,8 +1913,9 @@ function bs_divider( $atts, $content = null ) {
 
   /*--------------------------------------------------------------------------------------
   *
-  * Scrape the shortcode's contents for a particular DOMDocument tag or tags, pull them out, apply attributes, and return just the tags.
-  *
+  * Scrape the shortcode's contents for a particular DOMDocument tag or tags, 
+  * pull them out, apply attributes, and return just the tags.
+  * Deprecated and unused
   *-------------------------------------------------------------------------------------*/
   static function scrape_dom_element( $tag, $content, $class, $title = '', $data = null ) {
 
@@ -2406,7 +1957,9 @@ function bs_divider( $atts, $content = null ) {
   *
   * Find if content contains a particular tag, if not, create it, either way wrap it in a wrapper tag
   *
-  *       Example: Check if the contents of [page-header] include an h1, if not, add one, then wrap it all in a div so we can add classes to that.
+  *       Example: Check if the contents of [page-header] include an h1, 
+  *                if not, add one, then wrap it all in a div so we can add classes to that.
+  * Deprecated, unused
   *
   *-------------------------------------------------------------------------------------*/
   static function nest_dom_element($find, $append, $content) {

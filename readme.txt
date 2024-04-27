@@ -86,6 +86,18 @@ I mean, come on, what would you do with a progress bar? or breadcrumbs in you po
 
 == Changelog ==
 
+= 4.0.4 =
+- updated SHORTCODES-compiled.html
+- tentative to make most methods generic
+- physically removed table, table-wrap, media*, img, embed-responsive, thumbnail, page-header, responsive, panel*
+- card-block becomes card-body
+- added grid/grop login to cards
+- added "cols" atts for cards type=grid
+- added "type" atts for card
+- [ ] todo: check if bootstrap is not already loaded by theme or best tinymce editor...
+- [ ] todo: fix css grid insert in SHORTCODES-compiled
+- [ ] add dropdown menu in TinyMCE, tired of this crap modal
+
 = 4.0.3 =
 - with nodeJS grunt + Gruntfile.js, README.md is converted to SHORTCODES.html - must test if we can maintain it
   - the problem is that the top of the README structure is incompatible with the Tabs structure

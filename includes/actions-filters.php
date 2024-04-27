@@ -72,7 +72,8 @@
         // https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js     // +popper
 
         wp_register_style( 'bootstrap53-css', 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css' );
-        wp_register_style( 'bs-callout', dirname(__FILE__).'/css/bs-callout.css' );
+        // wp_register_style( 'bs-callout', __DIR__.'/css/bs-callout.css' );
+        wp_register_style( 'bs-callout', plugins_url( 'includes/css/bs-callout.css' , __FILE__ ));
 
         wp_enqueue_style( 'bootstrap53-css' );
         wp_enqueue_style( 'bs-callout' );
@@ -130,7 +131,6 @@
     function boostrap_shortcodes_help_after_mce() {
         include( BS_SHORTCODES_DIR . 'bootstrap-shortcoder-help.php');
     }
-
     // add_action( 'admin_footer', 'boostrap_shortcodes_help' ); // heresy
     add_action( 'after_wp_tiny_mce', 'boostrap_shortcodes_help_after_mce' );
 
