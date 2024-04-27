@@ -3,7 +3,7 @@ Contributors: mwdelaney, FoolsRun, filipstefansson, nodley
 Tags: bootstrap, shortcode, shortcodes, responsive, grid
 Requires at least: 3.8
 Tested up to: 4.6
-Stable tag: 4.0.2
+Stable tag: 4.0.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -26,37 +26,37 @@ Tested and working in the latest version of Bootstrap!
 ###Supported Shortcodes
 ####CSS
 * Grid (container, row, columns, fully responsive)
-* Lead body copy
-* Emphasis classes
-* Code
-* Tables
 * Buttons
-* Images
-* Responsive embeds
-* Responsive utilities
 ####Components
 * Button Groups
 * Button Dropdowns
-* Navs
-* Breadcrumbs
-* Labels
-* Badges
 * Jumbotron
-* Page Header
-* Thumbnails
 * Alerts
 * Progress Bars
-* Media Objects
 * List Groups
-* Panels
-* Wells
 ####JavaScript
 * Tabs
 * Tooltip
 * Popover
-* Collapse (Accordion)
+* Accordion (Collapse)
 * Carousel
 * Modal
+###Deprecated Shortcodes
+* Lead body copy
+* Emphasis classes
+* Code
+* Tables
+* Images
+* Responsive embeds
+* Responsive utilities
+* Navs
+* Breadcrumbs
+* Labels
+* Badges
+* Page Header
+* Thumbnails
+* Media Objects
+* Wells
 
 == Installation ==
 1. Download and unzip this plugin
@@ -66,29 +66,55 @@ Tested and working in the latest version of Bootstrap!
 
 == Frequently Asked Questions ==
 
-= Does this plugin include Bootstrap 3? =
+= Does this plugin include Bootstrap 5.3? =
 
-No, we assume you are already working with a WordPress theme that includes the Bootstrap libraries.
+Yes, we include the CDN link from cdn.jsdelivr.net. 
+
+= What happens if my Theme includes and uses Bootstrap? =
+
+3 situations:
+- If you theme does not include Bootstrap, we load it = no problems.
+- If you theme includes Bootstrap 5, we replace it by version 5.3.
+- If you theme includes Bootstrap 4 or lower, we are incompatible.
+
+= Is this retro-compatible with shortcodes from _Boostrap 3 Shortcodes_ plugin? =
+
+More or less, but:
+- some stuff will break because the templates have changed: Tabs, ...
+- some stuff are not included, see list above: Wells, Progress bars, Media, Images, Thumbnails...
+I mean, come on, what would you do with a progress bar? or breadcrumbs in you posts?? The rest is either useless or included in WP 6.5.
 
 == Changelog ==
 
+= 4.0.3 =
+- with nodeJS grunt + Gruntfile.js, README.md is converted to SHORTCODES.html - must test if we can maintain it
+  - the problem is that the top of the README structure is incompatible with the Tabs structure
+- renamed /help/README to /templates/SHORTCODES
+- SHORTCODES Tabs are broken again
+- should add examples from https://getbootstrap.com/docs/5.3/examples/
+- moved shortcoder functions I keep under includes/shortcoder X cancelled: cannot include(methods.php)
+- complete rewrite of the Class BoostrapShortcodes
+- fixed callout
+- updated bs-callout.css with BS 5.3 examples
+
 = 4.0.2 =
-* major cleanup
-* started revamp of help/README: placed some insert code buttons at the top
-* added scroll-up in modal
-* rewrote modal and functions attached
-* most works with Bootstrap 5.3
+- major cleanup
+- added demo class for Grid
+- started revamp of help/README: placed some insert code buttons at the top
+- added scroll-up in modal
+- rewrote modal and functions attached
+- most works with Bootstrap 5.3
 
 = 4.0.1 =
-* fixed a major bug... shortcodes helper was loaded in the footer ALWAYS... slowing down your admin
-* most functions and names are renamed properly
-* added Bootstrap 5.3 cdn
-* partially validated for Bootstrap 5.3: data-stuff becomes data-bs-stuff
+- fixed a major bug... shortcodes helper was loaded in the footer ALWAYS... slowing down your admin
+- most functions and names are renamed properly
+- added Bootstrap 5.3 cdn
+- partially validated for Bootstrap 5.3: data-stuff becomes data-bs-stuff
 
 = 4.0.0 =
-* Complete reboot and new name
-* added callout, cards, row-container
-* panel
+- Complete reboot and new name
+- added callout, cards, row-container
+- panel
 
 - Added callout:
   - these are the callout from Bootstrap docs, plus a nice background, plus transparency and disabled options.

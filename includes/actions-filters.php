@@ -25,7 +25,7 @@
 // ======================================================================== // 
 
     function bootstrap_shortcodes_styles_all() {
-        wp_register_style( 'bootstrap-shortcoder-help-all', plugins_url( 'bootstrap-shortcoder/includes/help/css/bootstrap-shortcoder-help-all.css' ) );
+        wp_register_style( 'bootstrap-shortcoder-help-all', plugins_url( 'bootstrap-shortcoder/includes/templates/css/bootstrap-shortcoder-help-all.css' ) );
         wp_enqueue_style( 'bootstrap-shortcoder-help-all' );
     }
 
@@ -72,15 +72,19 @@
         // https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js     // +popper
 
         wp_register_style( 'bootstrap53-css', 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css' );
+        wp_register_style( 'bs-callout', dirname(__FILE__).'/css/bs-callout.css' );
+
+        wp_enqueue_style( 'bootstrap53-css' );
+        wp_enqueue_style( 'bs-callout' );
+
         wp_register_script( 'popper', 'https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js' );
         wp_register_script( 'bootstrap53-js', 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js' );
         wp_register_script( 'bootstrap53-js-bundle', 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js' );
 
-        wp_enqueue_style( 'bootstrap53-css' );
-        wp_enqueue_script( 'popper' );                   // front is conditionally loaded by bootstrap_shortcodes_popover_script
+        wp_enqueue_script( 'popper' );                   // front is conditionally loaded by bootstrap_shortcodes_popper_script
         wp_enqueue_script( 'bootstrap53-js' );
 
-        //Visual Composer causes problems
+        // bugfix: Visual Composer causes problems
         $handle = 'vc_bootstrap_js';
         $list = 'enqueued';
         if (wp_script_is( $handle, $list )) {
@@ -107,9 +111,9 @@
         );
     }
 
-    //add the button to the content editor, next to the media button on any admin page in the array below
+    // add the button to the content editor, next to the media button on any admin page in the array below
     if(in_array(basename($_SERVER['PHP_SELF']), array('post.php', 'page.php', 'page-new.php', 'post-new.php', 'widgets.php', 'admin-ajax.php'))) {
-        add_action('media_buttons', 'add_bootstrap_button', 11);
+        add_action( 'media_buttons', 'add_bootstrap_button', 11 );
         add_action( 'media_buttons', 'bootstrap_shortcodes_help_styles' );
     }
 
@@ -118,15 +122,16 @@
 
 
 // ======================================================================== //		
-// Include the help popup content in the footer
-// scavenger: MY MY MY no wonder my admin was so slow...
+// Include the help popup content in the footer oO WHAT??
+// scavenger: MY MY MY, no wonder my admin was so slow...
+// now it loads only with TinyMCE
 // ======================================================================== // 
 
     function boostrap_shortcodes_help_after_mce() {
         include( BS_SHORTCODES_DIR . 'bootstrap-shortcoder-help.php');
     }
 
-    // add_action( 'admin_footer', 'boostrap_shortcodes_help' );
+    // add_action( 'admin_footer', 'boostrap_shortcodes_help' ); // heresy
     add_action( 'after_wp_tiny_mce', 'boostrap_shortcodes_help_after_mce' );
 
 // ======================================================================== // 
@@ -140,7 +145,7 @@
     function bs_fullscreenbuttons($buttons) {
         $buttons[] = 'separator';
         $buttons['bootstrap-shortcoder'] = array(
-            'title' => __('Boostrap 3 Shortcodes Help'),
+            'title' => __('Bootstrap Shortcoder Help'),
             'onclick' => "jQuery('#bootstrap-shortcoder-help').modal('show');",
             'both' => false 
         );

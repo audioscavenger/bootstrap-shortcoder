@@ -1,17 +1,7 @@
 <?php
 
 // ======================================================================== //		
-// Get the contents of the help document, save them in a variable
-// ======================================================================== // 
-
-$html = file_get_contents(dirname(__FILE__) . '/help/README.html');
-
-// ======================================================================== // 
-
-
-
-// ======================================================================== //		
-// Include some jQuery to edit the help document
+// Include some functional css and jQuery for the shortcodes dropper
 // ======================================================================== //
 ?>
 <style type="text/css">
@@ -65,22 +55,19 @@ $html = file_get_contents(dirname(__FILE__) . '/help/README.html');
     
         // ======================================================================== //		
         // Send example shortcodes to the TinyMCE editor when a new example button is clicked
-        // the insert code buttons are in groups btn-group-md and have those classes: btn insert-code
+        // the drop code buttons have those classes: btn drop-code + data-h3=#id of the h3 with the code to drop
         // How do we get to the code we want to insert? here is the structure of each original example:
-            // <h3 id="buttons">Buttons</h3>
-            // <pre><code>[button type=&quot;success&quot; size=&quot;lg&quot; link=&quot;#&quot;] ... [/button]</code></pre>
-        // new structure:
-            // <h3 id="buttons">Buttons</h3>
-            // <h4 id="btn-primary, primary, success, info, warning, danger, link">btn-primary</h4>
-            // <pre><code>[button type=&quot;success&quot; size=&quot;lg&quot; link=&quot;#&quot;] ... [/button]</code></pre> [<pre><code>[button type=&quot;primary&quot; size=&quot;md&quot; link=&quot;#&quot;] ... [/button]</code></pre> dynamically added--> [<p><button data-bs-dismiss="modal" class="btn btn-primary btn-sm insert-code">Insert Example <i class="glyphicon glyphicon-share-alt"></i></button></p>]
-            // ...
+            // <button data-h3="#bs-btn-primary" data-bs-dismiss="modal" class="btn btn-primary drop-code">primary</button>
+                // will call this code:
+            // <h3 id="bs-btn-primary">btn-primary</h3>
+            // <pre><code>[button type="primary" size="md" link="#"] primary [/button]</code></pre>
         // ======================================================================== //
         
             jQuery(".drop-code").click(function() {
                 // cannot use href, it breaks the close modal event
-                // also all the h3 id are prepended by bs- during loading of the README
-                console.log(this.dataset.h4);    // #bs-btn-primary
-                var example = jQuery(this.dataset.h4).next().find("code").text();
+                // also all the h3 id are prepended by bs- during rebuilding of the SHORTCODES
+                // console.log('this.dataset.h3',this.dataset.h3);    // #bs-btn-primary
+                var example = jQuery(this.dataset.h3).next().find("code").text();
                 var lines = example.split('\n');
                 var paras = '';
                 jQuery.each(lines, function(i, line) {
@@ -102,24 +89,6 @@ $html = file_get_contents(dirname(__FILE__) . '/help/README.html');
                 jQuery(".modal-body").animate({scrollTop:0},800);
                 return false;
             });
-        
-        // ======================================================================== //		
-        // Create tabs from the help documentation content, splitting on the H2s
-        // ======================================================================== //
-        // scavenger: all is now disabled
-        // ======================================================================== //
-        
-            // jQuery('#bootstrap-shortcoder-help h2').each(function(){
-                // var id = jQuery(this).attr("id");
-                // jQuery(this).removeAttr("id").nextUntil("h2").andSelf().wrapAll('<div class="tab-pane" id="bs-' + id + '" />');
-            // });
-            //Make the documentation tab active
-            // jQuery('#bs-shortcode-reference').addClass('active');  // scavenger unneeded
-        
-            //Hide header info from the readme, not relevent to documentation.
-            // jQuery("#bootstrap-shortcoder-help #bootstrap-shortcoder-for-wordpress").nextUntil("#bootstrap-shortcoder-help #bs-requirements").hide();
-        
-        // ======================================================================== //
         
     });
 </script>
@@ -168,21 +137,33 @@ $html = file_get_contents(dirname(__FILE__) . '/help/README.html');
             //      * Add IDs to h3 tags for the above on-page jumps
             //      * Add "Insert Example" buttons after code examples
             // ======================================================================== //
+            // Since 4.0.3 we will use the compiled version, I am not maintaining the README.md
+            //      because the structure is incompatible with tab-content; we could shuffle stuff around
+            //      with PHP and some markers placed perperly, but why do I care? I don't even have grunt installed.
+            // ======================================================================== //
             
-            $html = preg_replace('/(<a href="http:[^"]+")>/is','\\1 target="_blank">',$html);
-            $html = str_replace('<table>', '<table class="table table-striped">', $html);
-            $html = str_replace('<ul>', '<div class="list-group">', $html);
-            $html = str_replace('</ul>', '</div>', $html);
-            $html = str_replace('<li><a ', '<a class="list-group-item" ', $html);
-            $html = str_replace('</li>', '', $html);
-            $html = str_replace('href="#', 'href="#bs-', $html);
-            $html = str_replace('<hr>', '<hr><a class="btn btn-link btn-primary pull-right" href="#bs-top"><i class="text-muted glyphicon glyphicon-arrow-up"></i></a>', $html);
-            $html = str_replace('<h3 id="', '<h3 id="bs-', $html);
-            $html = str_replace('</pre>', '</pre><p><button data-bs-dismiss="modal" class="btn btn-primary btn-sm insert-code">Insert Example <i class="glyphicon glyphicon-share-alt"></i></button></p>', $html);
+            // ======================================================================== //		
+            // Get the contents of the help document, save them in a variable
+            // ======================================================================== // 
+            // $html = file_get_contents(dirname(__FILE__) . '/templates/SHORTCODES.html');
+            $html_compiled = file_get_contents(dirname(__FILE__) . '/templates/SHORTCODES-compiled.html');
+            // ======================================================================== // 
+
+            // $html = preg_replace('/(<a href="http:[^"]+")>/is','\\1 target="_blank">',$html);
+            // $html = str_replace('<table>', '<table class="table table-striped">', $html);
+            // $html = str_replace('<ul>', '<div class="list-group">', $html);
+            // $html = str_replace('</ul>', '</div>', $html);
+            // $html = str_replace('<li><a ', '<a class="list-group-item" ', $html);
+            // $html = str_replace('</li>', '', $html);
+            // $html = str_replace('href="#', 'href="#bs-', $html);
+            // $html = str_replace('<hr>', '<hr><a class="btn btn-link btn-primary pull-right" href="#bs-top"><i class="text-muted glyphicon glyphicon-arrow-up"></i></a>', $html);
+            // $html = str_replace('<h3 id="', '<h3 id="bs-', $html);
+            // $html = str_replace('</pre>', '</pre><p><button data-bs-dismiss="modal" class="btn btn-primary btn-sm insert-code">Insert Example <i class="glyphicon glyphicon-share-alt"></i></button></p>', $html);
             
-            // file_put_contents('/run/cache/README-debug.html', $html);
+            // file_put_contents('/run/cache/SHORTCODES-compiled.html', $html);
             // Insert the HTML now that we're done editing it
-            echo $html;
+            // echo $html;
+            echo $html_compiled;
 
             // ======================================================================== //
         ?>

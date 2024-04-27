@@ -1,0 +1,143 @@
+/* Bootstrap callout classes ARE CUSTOM AND NOT PROVIDED BY BOOTSTRAP */ 
+/* updated css from https://getbootstrap.com/docs/5.3/customize/components/ */
+:root,
+[data-bs-theme="light"] {
+  --bd-callout-link: 10,88,202;
+  --bd-callout-code-color: #ab296a;
+}
+[data-bs-theme="dark"] {
+  --bd-callout-link: 110,168,254;
+  --bd-callout-code-color: #e685b5;
+}
+.callout {
+  --bs-link-color-rgb: var(--bd-callout-link);
+  --bs-code-color: var(--bd-callout-code-color);
+  padding:1.25rem;
+  margin-top:1.25rem;
+  margin-bottom:1.25rem;
+  color:var(--bd-callout-color, inherit);
+  background-color:var(--bd-callout-bg, var(--bs-gray-100));
+  border-left:0.25rem solid var(--bd-callout-border, var(--bs-gray-300))
+}
+.callout h4 {
+  margin-bottom:.25rem
+}
+.callout>:last-child {
+  margin-bottom:0
+}
+.callout+.callout {
+  margin-top:-.25rem
+}
+.callout .highlight {
+  background-color:rgba(0,0,0,0.05)
+}
+.callout-primary {
+  --bd-callout-color: var(--bs-primary-text-emphasis);
+  --bd-callout-bg: var(--bs-primary-bg-subtle);
+  --bd-callout-border: var(--bs-primary-border-subtle)
+}
+.callout-secondary {
+  --bd-callout-color: var(--bs-secondary-text-emphasis);
+  --bd-callout-bg: var(--bs-secondary-bg-subtle);
+  --bd-callout-border: var(--bs-secondary-border-subtle)
+}
+.callout-success {
+  --bd-callout-color: var(--bs-success-text-emphasis);
+  --bd-callout-bg: var(--bs-success-bg-subtle);
+  --bd-callout-border: var(--bs-success-border-subtle)
+}
+.callout-warning {
+  --bd-callout-color: var(--bs-warning-text-emphasis);
+  --bd-callout-bg: var(--bs-warning-bg-subtle);
+  --bd-callout-border: var(--bs-warning-border-subtle)
+}
+.callout-danger {
+  --bd-callout-color: var(--bs-danger-text-emphasis);
+  --bd-callout-bg: var(--bs-danger-bg-subtle);
+  --bd-callout-border: var(--bs-danger-border-subtle)
+}
+.callout-info {
+  --bd-callout-color: var(--bs-info-text-emphasis);
+  --bd-callout-bg: var(--bs-info-bg-subtle);
+  --bd-callout-border: var(--bs-info-border-subtle)
+}
+.callout-light {
+  --bd-callout-color: var(--bs-light-text-emphasis);
+  --bd-callout-bg: var(--bs-light-bg-subtle);
+  --bd-callout-border: var(--bs-light-border-subtle)
+}
+.callout-dark {
+  --bd-callout-color: var(--bs-dark-text-emphasis);
+  --bd-callout-bg: var(--bs-dark-bg-subtle);
+  --bd-callout-border: var(--bs-dark-border-subtle)
+}
+
+
+/* .callout { */
+  /* padding: 20px; */
+  /* margin: 20px 0; */
+  /* border: 1px solid #eee; */
+  /* border-left-width: 5px; */
+  /* border-radius: 4px; */
+  /* margin-left: 50px; */
+/* } */
+.callout-xl {
+}
+.callout-lg {
+  margin-left: 5%;
+}
+.callout-md {
+  margin-left: 20%;
+}
+.callout-sm {
+  margin-left: 35%;
+}
+.callout-xs {
+  margin-left: 50%;
+}
+.callout h4 {
+  margin-top: 0;
+  margin-bottom: 5px;
+}
+.callout p:last-child {
+  margin-bottom: 0;
+}
+.callout code {
+  border-radius: 4px;
+}
+.callout+.callout {
+  margin-top: -5px;
+}
+.callout-default {
+  border-left-color: #777;
+}
+.callout-default h4 {
+  color: #777;
+}
+.callout-primary {
+  border-left-color: #428bca;
+}
+.callout-primary h4 {
+  color: #428bca;
+}
+.callout-danger {
+  border-left-color: #d9534f;
+}
+.callout-danger h4 {
+  color: #d9534f;
+}
+.callout-warning {
+  border-left-color: #f0ad4e;
+}
+.callout-warning h4 {
+  color: #f0ad4e;
+}
+.callout-info {
+  border-left-color: #5bc0de;
+}
+.callout-info h4 {
+  color: #5bc0de;
+}
+.callout.disabled {
+  opacity: 0.4;
+}

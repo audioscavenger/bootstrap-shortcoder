@@ -18,39 +18,19 @@ The plugin is tested to work with ```Bootstrap 3``` and ```WordPress 4.5``` and 
 
 ### CSS
 * [Grid](#grid)
-* [Lead body copy](#lead-body-copy)
-* [Emphasis classes](#emphasis-classes)
-* [Code](#code)
-* [Tables](#tables)
 * [Buttons](#buttons)
-* [Images](#images)
-* [Responsive Embeds](#responsive-embeds)
-* [Responsive utilities](#responsive-utilities)
 
 ### Components
-* [Icons](#icons)
+* [Accordion](#accordion)
 * [Button Groups](#button-groups)
 * [Button Dropdowns](#button-dropdowns)
-* [Navs](#navs)
-* [Breadcrumbs](#breadcrumbs)
-* [Labels](#labels)
-* [Badges](#badges)
 * [Jumbotron](#jumbotron)
-* [Page Header](#page-header)
-* [Thumbnails](#thumbnails)
 * [Alerts](#alerts)
-* [Progress Bars](#progress-bars)
-* [Media Objects](#media-objects)
-* [List Groups](#list-groups)
-* [Panels](#panels)
-* [Wells](#wells)
+* [Callouts](#alerts)
+* [Cards](#alerts)
 
 ### JavaScript
 * [Tabs](#tabs)
-* [Tooltip](#tooltip)
-* [Popover](#popover)
-* [Collapse](#collapse)
-* [Carousel](#carousel)
 * [Modal](#modal)
 
 

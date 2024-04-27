@@ -8,13 +8,13 @@ module.exports = function(grunt) {
           {
             expand: true,
             src: 'README.md',
-            dest: 'includes/help/',
+            dest: 'includes/templates/',
             ext: '.html'
           }
         ]
       },
       options: {
-        template: 'includes/help/README.jst',
+        template: 'includes/templates/SHORTCODES.jst',
         postCompile: function(src, contect) {
           grunt.log.write('Generating HTML from README.md...').ok()
         }
