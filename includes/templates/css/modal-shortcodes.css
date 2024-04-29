@@ -1,0 +1,30 @@
+/* scroll-up inside modal */
+#scroll-up {
+  display: inline-block;
+  position: sticky;
+  z-index: 99;
+  bottom: 40px;
+  right: 20px;
+  width: 50px;
+  height: 50px;
+  font-size: 28px;
+  line-height: 50px;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+  color: #1c1c1c;
+  background-color: #ffbf3f;
+  opacity: 1 !important;
+}
+
+/* modal button with emohi, same size as media button */
+.wp-media-buttons img.emoji {
+  height: 1.5em !important;
+  width: 1.5em !important;
+  vertical-align: -0.3em !important;
+}
+
+#bootstrap-shortcoder-help {
+  margin-left: 5%;
+  /* z-index: 9999; */
+}

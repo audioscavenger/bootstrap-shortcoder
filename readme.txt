@@ -86,10 +86,29 @@ I mean, come on, what would you do with a progress bar? or breadcrumbs in you po
 
 == Changelog ==
 
+= 4.0.5 =
+- [x] MY MY MY fix bug of SHORTCODES loaded outsoide TinyMCE once and for all
+- [x] rebuild main function and move this class under includes
+- [x] moved every functions inside BoostrapShortcodes
+- [x] moved everything inside BoostrapShortcodes
+- [x] fixed media-button icon and size
+- removed row_container
+- [x] Test drop actual html just like best-editor -> just send_to_editor(html) instead of shortcodes... it's that easy
+- [x] dequeue any other plugins loading bootstrap (except when they are a dependency)
+- [x] fix helper tabs again and stop breaking it
+- [ ] Add compiled code container after each code example so we can give choice to insert either
+- [ ] add scrollup in mce window to #wpbody
+- [ ] auto-load modal content just like in popover-shortcodes.js
+- [ ] add dropdown menu in TinyMCE, tired of this crap modal. Explore bs-menu.js (mce dropdowns injection)
+- [ ] disable register_shortcodes if is_admin()
+- [ ] todo: check if bootstrap is not already loaded by theme or best-editor...
+- [ ] todo: fix css grid insert in SHORTCODES-compiled
+- [ ] add dropdown menu in TinyMCE, tired of this crap modal
+
 = 4.0.4 =
 - updated SHORTCODES-compiled.html
 - tentative to make most methods generic
-- physically removed table, table-wrap, media*, img, embed-responsive, thumbnail, page-header, responsive, panel*
+- removed table, table-wrap, media*, img, embed-responsive, thumbnail, page-header, responsive, panel*
 - card-block becomes card-body
 - added grid/grop login to cards
 - added "cols" atts for cards type=grid

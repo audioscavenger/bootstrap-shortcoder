@@ -1,7 +1,6 @@
 <?php
 if (!defined('ABSPATH')) exit; // Exit if accessed directly
 // https://adambrown.info/p/wp_hooks/hook
-// https://rachievee.com/the-wordpress-hooks-firing-sequence/
 
 // ======================================================================== //		
 // PHP Version notice if version < 5.3
@@ -39,47 +38,46 @@ add_action( 'admin_enqueue_scripts', 'bootstrap_shortcodes_styles_all' );
 */
 
 // ======================================================================== // 
-function bs_enqueue_script_defer($handle, $url) {
-  wp_enqueue_script(
-    $handle,
-    $url,
-    [],
-    null,
-    [ 'strategy' => 'defer' ],
-  );
-}
 
+// ======================================================================== //		
+// Button creation and styles for the documentation popup button
+// ======================================================================== // 
+// scavenger: here we will start experimenting with BS 5.3
+// ======================================================================== // 
 
 //Function to register and enqueue the documentation stylesheets
 function bootstrap_shortcodes_help() {
-$dev = '';
-$dev = '?nocache=true&v='.rand(); // console.log + rand added 
-
   // https://getbootstrap.com/docs/5.3/getting-started/download/#cdn-via-jsdelivr
   // https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css
   // https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js    // shall be loaded conditionally
   // https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js
   // https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js   // +popper
 
-  // * 'enqueued', 'registered', 'queue', 'to_do', 'done'.
-  wp_register_style( 'modal-shortcodes',    plugins_url( 'templates/css/modal-shortcodes.css' , __FILE__ ));
-  wp_register_style( 'bs-callout',          plugins_url( 'css/bs-callout.css' , __FILE__ ));
-
-  if (!wp_style_is( 'bootstrap', 'enqueued' )) { wp_enqueue_style( 'bootstrap', 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css' ); }
-  wp_enqueue_style( 'bs-callout' );
+  wp_register_style( 'modal-shortcodes', plugins_url( 'templates/css/modal-shortcodes.css' , __FILE__ ));
   wp_enqueue_style( 'modal-shortcodes' );
 
-  // * 'enqueued', 'registered', 'queue', 'to_do', 'done'.
-  if (!wp_script_is( 'bootstrap', 'enqueued' )) { bs_enqueue_script_defer( 'bootstrap', 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js' ); }
-  bs_enqueue_script_defer( 'modal-shortcodes', plugins_url( 'templates/js/modal-shortcodes.js'.$dev , __FILE__ ));
+  // wp_register_script( 'popover-shortcodes', plugins_url( 'templates/js/popover-shortcodes.js'.$dev , __FILE__ ));
+  wp_register_script( 'modal-shortcodes', plugins_url( 'templates/js/modal-shortcodes.js'.$dev , __FILE__ ));
+
+  // front is conditionally loaded by ['BoostrapShortcodes', 'bootstrap_shortcodes_popper_script']
+  // wp_enqueue_scripts( 'popover-shortcodes' ); // need some serious work, and it's just fluff anyway
+  // wp_enqueue_scripts( 'modal-shortcodes' ); // defer trick:
+  wp_enqueue_scripts(
+        'modal-shortcodes',
+        plugins_url( 'templates/js/modal-shortcodes.js'.$dev , __FILE__ ),
+        [],
+        '',
+        [ 'strategy' => 'defer' ],
+      );
 
   // bugfix: Visual Composer causes problems
-  if (wp_script_is( 'vc_bootstrap_js', 'enqueued' )) { wp_dequeue_script( $handle ); }
+  $handle = 'vc_bootstrap_js';
+  $list = 'enqueued'; // *'enqueued', 'registered', 'queue', 'to_do', 'done'
+  if (wp_script_is( $handle, $list )) {
+    wp_dequeue_script( $handle );
+  }
 }
-//// I DON'T UNDERSTAND: wp_script_is() never works. wp_script_is() is unable to detect bootstrap loaded by best-editor. Is best-editor back-loading it via js??
-add_action( 'media_buttons', 'bootstrap_shortcodes_help' );  // loaded
-add_action( 'wp_enqueue_scripts', 'bootstrap_shortcodes_help', 12 );  // loaded
-// add_action( 'admin_print_footer_scripts', 'bootstrap_shortcodes_help' );  // loaded
+add_action( 'media_buttons', 'bootstrap_shortcodes_help' );
 
 
 // ======================================================================== //		
